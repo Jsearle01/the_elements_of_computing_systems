@@ -1,0 +1,9 @@
+CHIP Identity16 {
+    IN
+        in[16];
+    OUT
+        out[16];
+    PARTS:
+    And16(a=in,b[0..15]=true,out=out);
+}
+

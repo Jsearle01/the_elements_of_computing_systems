@@ -31,7 +31,6 @@
 // if (out == 0) sets zr = 1
 // if (out < 0)  sets ng = 1
 
-  
 CHIP ALU {
     IN  
         x[16], y[16],  // 16-bit inputs        
@@ -48,5 +47,28 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    // Put your code here.
+    // x
+    Zero16(a=x,z=zx,out=xa);
+    Negate16(a=xa,n=nx,out=xb);
+
+    // y
+    Zero16(a=y,z=zy,out=ya);
+    Negate16(a=ya,n=ny,out=yb);
+
+    // f
+    Add16(a=xb,b=yb,out=addxy);
+    And16(a=xb,b=yb,out=andxy);
+    Mux16(a=andxy,b=addxy,sel=f,out=fxy);
+
+    // no
+    Negate16(a=fxy,n=no,out=nfxy);
+
+    // Out
+    Identity16(in=nfxy,out=out);
+
+    // zr
+    EqualsZero(in=nfxy,out=zr);
+
+    // ng nfxy[0] == 1
+    Negative(in=nfxy,out=ng);
 }

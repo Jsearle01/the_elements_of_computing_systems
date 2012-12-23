@@ -1,0 +1,9 @@
+CHIP Negative {
+    IN
+        in[16];
+    OUT
+        out;
+    PARTS:
+    Identity(in=in[15],out=out);
+}
+

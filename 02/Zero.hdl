@@ -1,0 +1,13 @@
+/**
+ * Zero. Output's a or 0 if z == true
+ */
+
+CHIP Zero {
+    IN a, z;    // 1-bit input, and zero flag
+    OUT out;    // a or 0 if z == true
+
+    PARTS:
+    Not(in=z,out=notz);
+    And(a=a,b=notz,out=out);
+}
+

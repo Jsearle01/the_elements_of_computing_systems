@@ -1,0 +1,11 @@
+CHIP EqualsZero
+{
+    IN
+        in[16];
+    OUT
+        out;
+    PARTS:
+        Or16Way(in=in,out=orin);
+        Not(in=orin,out=out);
+}
+

@@ -1,0 +1,9 @@
+CHIP Identity {
+    IN
+        in;
+    OUT
+        out;
+    PARTS:
+    And(a=in,b=true,out=out);
+}
+

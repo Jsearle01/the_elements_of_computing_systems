@@ -1,0 +1,28 @@
+/*
+ * Negate 16-bit input, if n == true
+ */
+
+CHIP Negate16 {
+    IN a[16], n;
+    OUT out[16];
+
+    PARTS:
+    // Put your code here.
+    Negate(a=a[0], n=n, out=out[0]);
+    Negate(a=a[1], n=n, out=out[1]);
+    Negate(a=a[2], n=n, out=out[2]);
+    Negate(a=a[3], n=n, out=out[3]);
+    Negate(a=a[4], n=n, out=out[4]);
+    Negate(a=a[5], n=n, out=out[5]);
+    Negate(a=a[6], n=n, out=out[6]);
+    Negate(a=a[7], n=n, out=out[7]);
+    Negate(a=a[8], n=n, out=out[8]);
+    Negate(a=a[9], n=n, out=out[9]);
+    Negate(a=a[10], n=n, out=out[10]);
+    Negate(a=a[11], n=n, out=out[11]);
+    Negate(a=a[12], n=n, out=out[12]);
+    Negate(a=a[13], n=n, out=out[13]);
+    Negate(a=a[14], n=n, out=out[14]);
+    Negate(a=a[15], n=n, out=out[15]);
+}
+

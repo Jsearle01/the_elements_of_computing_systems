@@ -1,0 +1,29 @@
+/*
+ * Adds two 16-bit values.
+ * The most significant carry bit is ignored.
+ */
+
+CHIP Zero16 {
+    IN a[16], z;
+    OUT out[16];
+
+    PARTS:
+    // Put your code here.
+    Zero(a=a[0], z=z, out=out[0]);
+    Zero(a=a[1], z=z, out=out[1]);
+    Zero(a=a[2], z=z, out=out[2]);
+    Zero(a=a[3], z=z, out=out[3]);
+    Zero(a=a[4], z=z, out=out[4]);
+    Zero(a=a[5], z=z, out=out[5]);
+    Zero(a=a[6], z=z, out=out[6]);
+    Zero(a=a[7], z=z, out=out[7]);
+    Zero(a=a[8], z=z, out=out[8]);
+    Zero(a=a[9], z=z, out=out[9]);
+    Zero(a=a[10], z=z, out=out[10]);
+    Zero(a=a[11], z=z, out=out[11]);
+    Zero(a=a[12], z=z, out=out[12]);
+    Zero(a=a[13], z=z, out=out[13]);
+    Zero(a=a[14], z=z, out=out[14]);
+    Zero(a=a[15], z=z, out=out[15]);
+}
+

@@ -1,0 +1,12 @@
+/**
+ * Negate. Output's a or !a if n == true
+ */
+
+CHIP Negate {
+    IN a, n;
+    OUT out;
+
+    PARTS:
+    Xor(a=a,b=n,out=out);
+}
+
