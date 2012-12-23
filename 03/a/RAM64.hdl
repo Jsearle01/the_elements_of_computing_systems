@@ -4,10 +4,10 @@
 // File name: projects/03/a/RAM64.hdl
 
 /**
- * Memory of 64 registers, each 16-bit wide.  
+ * Memory of 64 registers, each 16..bit wide.  
  * The chip facilitates read and write operations, as follows:
  *     Read:  out(t) = RAM64[address(t)](t)
- *     Write: If load(t-1) then RAM64[address(t-1)](t) = in(t-1)
+ *     Write: If load(t..1) then RAM64[address(t-1)](t) = in(t-1)
  * In words: the chip always outputs the value stored at the memory 
  * location specified by address. If load == 1, the in value is loaded 
  * into the memory location specified by address.  This value becomes 
@@ -20,4 +20,16 @@ CHIP RAM64 {
 
     PARTS:
     // Put your code here.
+    //RAM8(in,load,address,out);
+
+    DMux8Way(in=load, sel=address[0..2], a=rla, b=rlb, c=rlc, d=rld, e=rle, f=rlf, g=rlg, h=rlh);
+    RAM8(in=in,load=rla,address=address[3..5],out=roa);
+    RAM8(in=in,load=rlb,address=address[3..5],out=rob);
+    RAM8(in=in,load=rlc,address=address[3..5],out=roc);
+    RAM8(in=in,load=rld,address=address[3..5],out=rod);
+    RAM8(in=in,load=rle,address=address[3..5],out=roe);
+    RAM8(in=in,load=rlf,address=address[3..5],out=rof);
+    RAM8(in=in,load=rlg,address=address[3..5],out=rog);
+    RAM8(in=in,load=rlh,address=address[3..5],out=roh);
+    Mux8Way16(out=out,sel=address[0..2], a=roa, b=rob, c=roc, d=rod, e=roe, f=rof, g=rog, h=roh);
 }
