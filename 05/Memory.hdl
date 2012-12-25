@@ -28,4 +28,39 @@ CHIP Memory {
 
     PARTS:
     // Put your code here.
+
+    // 0x4000 - 100000000000000
+    // 0x5FFF - 101111111111111
+    // 0x6000 - 110000000000000
+
+    // 00 ram
+    // 01 ram
+    // 10 screen
+    // 11 kbd
+
+    // Not(in=address[13],out=n13);
+    // Not(in=address[14],out=n14);
+
+    // And(a=n13,b=n14,out=rama);
+    // And(a=n14,b=address[13],out=ramb);
+    // Or(a=rama,b=ramb,out=ram);
+
+    // And(a=n14,b=address[13],out=screen);
+    // And(a=address[13],b=address[14],out=kbd);
+
+    // And(a=ram,b=load,out=rload);
+    // And(a=screen,b=load,out=sload);
+    // And(a=kbd,b=load,out=kload);
+
+    // RAM16K(in[0..14]=in[0..14],address=address[0..13],load=rload,out=rout);
+    // Screen(in=in,load=sload,address=address[0..12],out=sout);
+    // Keyboard(out=kout);
+
+    DMux4Way(in=load,sel=address[13..14],a=rloada,b=rloadb,c=sload,d=kload);
+    Or(a=rloada,b=rloadb,out=rload);
+    RAM16K(in[0..14]=in[0..14],address=address[0..13],load=rload,out=rout);
+    Screen(in=in,load=sload,address=address[0..12],out=sout);
+    Keyboard(out=kout);
+    Mux4Way16(a=rout,b=rout,c=sout,d=kout,sel=address[13..14],out=out);
 }
+

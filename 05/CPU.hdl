@@ -37,6 +37,115 @@ CHIP CPU {
         addressM[15],    // RAM address (of M)
         pc[15];          // ROM address (of next instruction)
 
-     PARTS:
-    // Put your code here.
+    PARTS:
+    //ALU(x=,y=,zx,nx,zy,ny,f,no,out,zr,ng);
+    // i xx a cccccc ddd jjj
+    //  i  x  x  a c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+    // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+
+    map(in=instruction[15],out=CInstruction);
+    Not(in=instruction[15],out=AInstruction);
+
+    map(in=instruction[12], out=a);
+    map(in=instruction[11], out=c1);
+    map(in=instruction[10], out=c2);
+    map(in=instruction[09], out=c3);
+    map(in=instruction[08], out=c4);
+    map(in=instruction[07], out=c5);
+    map(in=instruction[06], out=c6);
+    map(in=instruction[05], out=d1);
+    map(in=instruction[04], out=d2);
+    map(in=instruction[03], out=d3);
+    map(in=instruction[02], out=j1);
+    map(in=instruction[01], out=j2);
+    map(in=instruction[00], out=j3);
+
+    //And(a=CInstruction,b=instruction[12], out=a);
+
+    // ddd destinations
+    And(a=d1, b=CInstruction,out=CwriteA);
+    Or (a=CwriteA, b=AInstruction,out=writeA);
+    And(a=d2, b=CInstruction,out=writeD);
+    And(a=d3, b=CInstruction,out=writeM);
+
+    // jjj
+    DMux8Way(
+        in=CInstruction,
+        sel[2]=j1,
+        sel[1]=j2,
+        sel[0]=j3,
+        a=null,
+        b=jgt,
+        c=jeq,
+        d=jge,
+        e=jlt,
+        f=jne,
+        g=jle,
+        h=jmp
+        );
+
+
+    // set jump
+    And(a=jgt, b=gt, out=jump0);
+    And(a=jeq, b=eq, out=jump1);
+    And(a=jge, b=ge, out=jump2);
+    And(a=jlt, b=lt, out=jump3);
+    And(a=jne, b=ne, out=jump4);
+    And(a=jle, b=le, out=jump5);
+
+    Or8Way(
+        in[0]=jump0,
+        in[1]=jump1,
+        in[2]=jump2,
+        in[3]=jump3,
+        in[4]=jump4,
+        in[5]=jump5,
+        in[6]=jmp,
+        in[7]=false,
+        out=jump
+        );
+
+    Mux16(a=instruction,b=ALUout,sel=CInstruction,out=ain);
+
+    ARegister(
+        in=ain,
+        load=writeA,
+        out=ARegister,
+        out[0..14]=addressM);
+    DRegister(
+        in=ALUout,
+        load=writeD,
+        out=dout);
+
+    Not(in=reset,out=inc);
+    PC(in=ARegister,load=jump,inc=inc,reset=reset,out[0..14]=pc);
+
+    Mux16(a=ARegister,b=inM,sel=instruction[12],out=AMMux);
+    ALU(
+        x=dout,
+        y=AMMux,
+        zx=c1,
+        nx=c2,
+        zy=c3,
+        ny=c4,
+         f=c5,
+        no=c6,
+        out=ALUout,
+        out=outM,
+        zr=zero,
+        ng=negative
+        );
+
+    // out's properties
+    Not(in=zero,out=notZero);
+    Not(in=negative,out=positive);
+
+    // out's relation to zero
+    And(a=positive,b=notZero,out=gt);
+    And(a=true    ,b=zero,out=eq);
+    Or (a=positive,b=zero,out=ge);
+    And(a=negative,b=notZero,out=lt);
+    And(a=true    ,b=notZero,out=ne);
+    Or (a=negative,b=zero,out=le);
 }
+
