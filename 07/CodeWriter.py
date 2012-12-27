@@ -4,15 +4,38 @@ class CodeWriter:
     def __init__(self, output_file):
         self.file = output_file
         self.get_id = count().__next__
+        self.symbols = {
+                'local'   : 'LCL',
+                'argument': 'ARG',
+                'this'    : 'THIS',
+                'that'    : 'THAT',
+                }
 
     def write(self, s):
         self.file.write(s)
         self.file.write('\n')
 
+    def hlasm(self, s, index=None):
+        for line in [l.strip() for l in s.format(index=index).split('\n')]:
+            if line == '':
+                pass
+            elif line[0] == ',':
+                # macro
+                cmd = line[1:].strip().replace(' ', '_')
+                if cmd == '++SP':
+                    self.increment_SP()
+                elif cmd == '--SP':
+                    self.decrement_SP()
+                else:
+                    getattr(self, cmd)()
+            else:
+                self.write(line)
+
     def setFileName(self, fileName):
         pass
 
     def writeArithmetic(self, command):
+        self.write('@10101')
         if command == 'neg':
             self.pop_into_D()         # D = *(SP--);
             self.write('D=-D')
@@ -22,8 +45,8 @@ class CodeWriter:
             self.write('D=!D')
             self.push_from_D()
         elif command == 'eq':
-            self.pop_into_D()         # D = *(SP--);
-            self.decrementSP()        # SP--
+            self.pop_into_d()         # D = *(SP--);
+            self.decrement_SP()       # SP--
             self.write('A=M')         # A = SP
 
             self.write('D=D-M')       # D -= *SP
@@ -41,7 +64,7 @@ class CodeWriter:
             self.push_from_D()
         elif command == 'gt':
             self.pop_into_D()         # D = *(SP--);
-            self.decrementSP()        # SP--
+            self.decrement_SP()        # SP--
             self.write('A=M')         # A = SP
 
             self.write('D=D-M')       # D -= *SP
@@ -59,7 +82,7 @@ class CodeWriter:
             self.push_from_D()
         elif command == 'lt':
             self.pop_into_D()         # D = *(SP--);
-            self.decrementSP()        # SP--
+            self.decrement_SP()        # SP--
             self.write('A=M')         # A = SP
 
             self.write('D=D-M')       # D -= *SP
@@ -78,54 +101,100 @@ class CodeWriter:
         else:
             self.pop_into_D()         # D = *(SP--);
 
-            self.decrementSP()
+            self.decrement_SP()
             self.write('A=M')         # A = SP
 
-            if command == 'add':
-                self.write('D=D+M')
-            elif command == 'sub':
-                self.write('D=-D')
-                self.write('D=D+M')
+            if   command == 'add': self.write('D=D+M')
+            elif command == 'sub': self.write('D=-D\nD=D+M')
             elif command == 'and': self.write('D=D&M')   # D &= *SP
-            elif command == 'or': self.write('D=D|M')   # D |= *SP
+            elif command == 'or' : self.write('D=D|M')   # D |= *SP
             else: self.write('arithmetic: %s' % command)
 
             self.push_from_D()
 
     def pop_into_D(self):
-            self.decrementSP()    # SP -= 1
-            self.write('A=M')
-            self.write('D=M')     # D = *SP
+        self.decrement_SP()    # SP -= 1
+        self.write('A=M')
+        self.write('D=M')     # D = *SP
 
     def push_from_D(self):
-        self.write('@SP')
-        self.write('A=M')
-        self.write('M=D')
-        self.incrementSP()
+        self.set_deref_pointer_to_D('SP')
+        self.increment_SP()
 
-    def decrementSP(self):
+    def decrement_SP(self):
         self.write('@SP')
         self.write('M=M-1')       # *SP -= 1
         
-    def incrementSP(self):
+    def increment_SP(self):
         self.write('@SP')
         self.write('M=M+1')       # *SP += 1
 
+    def store_segment_pointer(self, dest, segment, index):
+        # set A to segment pointer
+        self.write('@%s' % self.symbols[segment])
+
+        # increment pointer by index
+        self.write('D=M')
+        self.write('@%s' % index)
+        self.write('D=D+A')
+
+        # store pointer
+        self.write('@%s' % dest)
+        self.write('M=D')
+            
+    def set_deref_pointer_to_D(self, dest) :
+        self.write('@%s' % dest)
+        self.write('A=M')
+        self.write('M=D')
+
+    def set_memory_to_D(self, dest):
+        self.write('@%s' % dest)
+        self.write('M=D')
+
     def WritePushPop(self, command, segment, index):
+        self.write('@10101')
         if command == 'C_PUSH':
             if segment == 'constant':
-                self.write('@%s' % index)
+                self.hlasm('''
+                @{index}
+                D=A
+                ,push from D
+                ''', index)
+            elif segment == 'temp':
+                # push temp index -> onto the stack
+                self.hlasm('''
+                @R5
+                D=A
+                @{index}
+                D=D+A
+                A=D
+                D=M
+                ,push from D
+                ''', index)
+            else:
+                self.store_segment_pointer('R13', segment, index)
+                self.hlasm('''
+                @R13
+                A=M
+                D=M
+                ,push from D
+                ''')
+        elif command == 'C_POP':
+            if segment == 'temp':
+                self.write('@R5')
                 self.write('D=A')
-                self.write('@SP')
+                self.write('@%s' % index)
+                self.write('D=D+A')
+                self.write('@R13')
+                self.write('M=D')
+                self.pop_into_D()
+                self.write('@R13')
                 self.write('A=M')
                 self.write('M=D')
-                self.write('D=A+1')
-                self.write('@SP')
-                self.write('M=D')
             else:
-                self.write('unknown segment: %s' % segment)
-        elif command == 'C_POP':
-            pass
+                self.store_segment_pointer('R13', segment, index)
+                self.pop_into_D()
+                self.set_deref_pointer_to_D('R13')
         else:
             self.write('unknown pushPop: %s ; %s ; %s' % (command, segment, index))
 

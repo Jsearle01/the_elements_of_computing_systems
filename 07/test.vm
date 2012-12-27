@@ -1,6 +1,12 @@
-push constant 64
-push constant 31
-sub
-
-
-
+push constant 101
+push constant 102
+push constant 103
+pop temp 2
+pop temp 1
+pop temp 0
+push constant 32000
+push constant 32001
+push constant 32002
+push temp 0
+push temp 1
+push temp 2

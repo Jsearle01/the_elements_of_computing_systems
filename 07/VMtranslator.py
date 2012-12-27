@@ -44,7 +44,7 @@ for filename in filenames:
         #cw.WritePushPop(command, segment, index)
         #cw.writeArithmetic(command)
         t = p.commandType()
-        if t == 'C_PUSH':
+        if t in ['C_PUSH', 'C_POP']:
             cw.WritePushPop(t, p.arg1(), p.arg2())
         elif t == 'C_ARITHMETIC':
             cw.writeArithmetic(p.arg1())
