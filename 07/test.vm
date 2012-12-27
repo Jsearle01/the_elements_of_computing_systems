@@ -1,0 +1,6 @@
+push constant 64
+push constant 31
+sub
+
+
+
