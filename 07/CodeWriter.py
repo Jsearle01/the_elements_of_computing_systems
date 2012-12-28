@@ -7,8 +7,6 @@ class CodeWriter:
         self.symbols = {
                 'local'   : 'LCL',
                 'argument': 'ARG',
-                'this'    : 'THIS',
-                'that'    : 'THAT',
                 }
 
     def write(self, s):
@@ -152,7 +150,7 @@ class CodeWriter:
         self.write('M=D')
 
     def WritePushPop(self, command, segment, index):
-        self.write('@10101')
+        self.write('@10102')
         if command == 'C_PUSH':
             if segment == 'constant':
                 self.hlasm('''
@@ -171,6 +169,25 @@ class CodeWriter:
                 D=M
                 ,push from D
                 ''', index)
+            elif segment == 'pointer':
+                if index == '0':
+                    self.write('@%s' % 'THIS')
+                else:
+                    self.write('@%s' % 'THAT')
+                self.hlasm('''
+                D=M
+                ,push from D
+                ''')
+            elif segment == 'this' or segment == 'that':
+                self.write('@%s' % segment.upper())
+                self.hlasm('''
+                D=M
+                @{index}
+                D=D+A
+                A=D
+                D=M
+                ,push from D
+                ''', index)
             else:
                 self.store_segment_pointer('R13', segment, index)
                 self.hlasm('''
@@ -183,6 +200,23 @@ class CodeWriter:
             if segment == 'temp':
                 self.write('@R5')
                 self.write('D=A')
+                self.write('@%s' % index)
+                self.write('D=D+A')
+                self.write('@R13')
+                self.write('M=D')
+                self.pop_into_D()
+                self.write('@R13')
+                self.write('A=M')
+                self.write('M=D')
+            elif segment == 'pointer':
+                self.hlasm('''
+                ,pop into D
+                @{index}
+                M=D
+                ''', index == '0' and 'THIS' or 'THAT')
+            elif segment in ['this', 'that']:
+                self.write('@%s' % segment.upper())
+                self.write('D=M')
                 self.write('@%s' % index)
                 self.write('D=D+A')
                 self.write('@R13')
