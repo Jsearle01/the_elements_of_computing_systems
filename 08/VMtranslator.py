@@ -50,6 +50,8 @@ for filename in filenames:
             cw.writeArithmetic(p.arg1())
         elif t == 'C_LABEL':
             cw.writeLabel(p.arg1())
+        elif t == 'C_GOTO':
+            cw.writeGoto(p.arg1())
         elif t == 'C_IF':
             cw.writeIf(p.arg1())
         else:

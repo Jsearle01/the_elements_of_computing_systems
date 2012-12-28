@@ -3,6 +3,18 @@ from functools import partial
 
 import os.path
 
+thisthat = {
+        '0': 'THIS',
+        '1': 'THAT',
+        'this': 'THIS',
+        'that': 'THAT',
+        }
+
+symbols = {
+        'local'   : 'LCL',
+        'argument': 'ARG',
+        }
+
 class CodeWriter:
     def __init__(self, output_file):
         global asm
@@ -10,10 +22,6 @@ class CodeWriter:
         self.file = output_file
         self.get_id = count().__next__
         self.current_function = ''
-        self.symbols = {
-                'local'   : 'LCL',
-                'argument': 'ARG',
-                }
 
     def write(self, s):
         self.file.write(s)
@@ -31,11 +39,11 @@ class CodeWriter:
                 pass
             elif line[0] == ',':
                 # macro
-                cmd = line[1:].strip().replace(' ', '_')
+                cmd, *args = line[1:].strip().split()
                 if cmd in aliases:
-                    aliases[cmd]()
+                    aliases[cmd](*args)
                 else:
-                    getattr(self, cmd)()
+                    getattr(self, 'macro_' + cmd)(*args)
             else:
                 self.write(line)
 
@@ -43,37 +51,50 @@ class CodeWriter:
         self.filename = os.path.splitext(os.path.basename(fileName))[0]
 
     def writeInit(self):
-        pass
+        asm('''
+        ,stamp 0
+        ''')
 
     def writeLabel(self, label):
         asm('''
-        ({}${})
+        ,stamp 1
+        ({0}${1})
         ''', self.current_function, label)
 
     def writeGoto(self, label):
         asm('''
-        ({}${})
+        ,stamp 2
+        @{0}${1}
         0;JMP
         ''', self.current_function, label)
 
     def writeIf(self, label):
         asm('''
+        ,stamp 3
         ,pop D
-        @{}${}
+        @{0}${1}
         D;JNE
         ''', self.current_function, label)
 
     def writeCall(self, functionName, numArgs):
-        pass
+        asm('''
+        ,stamp 4
+        ''')
 
     def writeReturn(self):
-        pass
+        asm('''
+        ,stamp 5
+        ''')
 
     def writeFunction(self, functionName, numLocals):
-        pass
+        asm('''
+        ,stamp 6
+        ''')
 
     def writeArithmetic(self, command):
-        self.write('@10101')
+        asm('''
+        ,stamp 7
+        ''')
         if command == 'neg':
             self.pop_D()         # D = *(SP--);
             self.write('D=-D')
@@ -137,10 +158,11 @@ class CodeWriter:
             self.write('(LT_END_%s)' % symbol_id)
             self.push_D()
         else:
-            self.pop_D()         # D = *(SP--);
-
-            self.decrement_SP()
-            self.write('A=M')         # A = SP
+            asm('''
+            ,pop D
+            ,--SP
+            A=M
+            ''')
 
             if   command == 'add': self.write('D=D+M')
             elif command == 'sub': self.write('D=-D\nD=D+M')
@@ -148,28 +170,45 @@ class CodeWriter:
             elif command == 'or' : self.write('D=D|M')   # D |= *SP
             else: self.write('arithmetic: %s' % command)
 
-            self.push_D()
+            asm(',push D')
 
-    def pop_D(self):
-        self.decrement_SP()    # SP -= 1
-        self.write('A=M')
-        self.write('D=M')     # D = *SP
+    def macro_pop(self, dest):
+        if dest == 'D':
+            asm('''
+            ,--SP
+            A=M
+            D=M
+            ''')
+        else:
+            raise Error('unknown pop destination')
 
-    def push_D(self):
-        self.set_deref_pointer_to_D('SP')
-        self.increment_SP()
+    def macro_push(self, dest):
+        if dest == 'D':
+            self.set_deref_pointer_to_D('SP')
+            self.increment_SP()
+        else:
+            raise Error('unknown push destination')
 
+    def macro_stamp(self, id_number):
+        asm('''
+        @{0}
+        @{1}
+        ''', 12345, 12300 + int(id_number))
     def decrement_SP(self):
-        self.write('@SP')
-        self.write('M=M-1')       # *SP -= 1
+        asm('''
+        @SP
+        M=M-1
+        ''')
         
     def increment_SP(self):
-        self.write('@SP')
-        self.write('M=M+1')       # *SP += 1
+        asm('''
+        @SP
+        M=M+1
+        ''')
 
     def store_segment_pointer(self, dest, segment, index):
         # set A to segment pointer
-        self.write('@%s' % self.symbols[segment])
+        self.write('@%s' % symbols[segment])
 
         # increment pointer by index
         self.write('D=M')
@@ -190,7 +229,9 @@ class CodeWriter:
         self.write('M=D')
 
     def WritePushPop(self, command, segment, index):
-        self.write('@10102')
+        asm('''
+        ,stamp 8
+        ''')
         if command == 'C_PUSH':
             if segment == 'constant':
                 self.hlasm('''
@@ -209,7 +250,7 @@ class CodeWriter:
                 self.hlasm('''
                 @R5
                 D=A
-                @{arg1}
+                @{0}
                 D=D+A
                 A=D
                 D=M
@@ -217,23 +258,24 @@ class CodeWriter:
                 ''', index)
             elif segment == 'pointer':
                 if index == '0':
-                    self.write('@%s' % 'THIS')
+                    dest = 'THIS'
                 else:
-                    self.write('@%s' % 'THAT')
-                self.hlasm('''
+                    dest = 'THAT'
+                asm('''
+                @{}
                 D=M
                 ,push D
-                ''')
+                ''', dest)
             elif segment == 'this' or segment == 'that':
-                self.write('@%s' % segment.upper())
-                self.hlasm('''
+                asm('''
+                @{0}
                 D=M
-                @{index}
+                @{1}
                 D=D+A
                 A=D
                 D=M
                 ,push D
-                ''', index)
+                ''', segment.upper(), index)
             else:
                 self.store_segment_pointer('R13', segment, index)
                 self.hlasm('''
@@ -255,31 +297,33 @@ class CodeWriter:
                 self.write('A=M')
                 self.write('M=D')
             elif segment == 'static':
-                self.hlasm('''
-                ,pop into D
-                ''')
-                self.write('@%s.%s' % (self.filename, index))
-                self.write('M=D')
-            elif segment == 'pointer':
-                self.hlasm('''
-                ,pop into D
-                @{index}
+                asm('''
+                ,pop D
+                @{0}.{1}
                 M=D
-                ''', index == '0' and 'THIS' or 'THAT')
+                ''', self.filename, index)
+            elif segment == 'pointer':
+                asm('''
+                ,pop D
+                @{}
+                M=D
+                ''', thisthat[index])
             elif segment in ['this', 'that']:
-                self.write('@%s' % segment.upper())
-                self.write('D=M')
-                self.write('@%s' % index)
-                self.write('D=D+A')
-                self.write('@R13')
-                self.write('M=D')
-                self.pop_D()
-                self.write('@R13')
-                self.write('A=M')
-                self.write('M=D')
+                asm('''
+                @{0}
+                D=M
+                @{1}
+                D=D+A
+                @R13
+                M=D
+                ,pop D
+                @R13
+                A=M
+                M=D
+                ''', thisthat[segment], index)
             else:
                 self.store_segment_pointer('R13', segment, index)
-                self.pop_D()
+                asm(',pop D')
                 self.set_deref_pointer_to_D('R13')
         else:
             raise SyntaxError('unknown pushPop: %s ; %s ; %s' % (command, segment, index))
