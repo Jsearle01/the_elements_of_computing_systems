@@ -1,4 +1,5 @@
 from itertools import count
+import os.path
 
 class CodeWriter:
     def __init__(self, output_file):
@@ -30,7 +31,7 @@ class CodeWriter:
                 self.write(line)
 
     def setFileName(self, fileName):
-        pass
+        self.filename = os.path.splitext(os.path.basename(fileName))[0]
 
     def writeArithmetic(self, command):
         self.write('@10101')
@@ -158,6 +159,12 @@ class CodeWriter:
                 D=A
                 ,push from D
                 ''', index)
+            elif segment == 'static':
+                self.write('@%s.%s' % (self.filename, index))
+                self.hlasm('''
+                D=M
+                ,push from D
+                ''')
             elif segment == 'temp':
                 # push temp index -> onto the stack
                 self.hlasm('''
@@ -207,6 +214,12 @@ class CodeWriter:
                 self.pop_into_D()
                 self.write('@R13')
                 self.write('A=M')
+                self.write('M=D')
+            elif segment == 'static':
+                self.hlasm('''
+                ,pop into D
+                ''')
+                self.write('@%s.%s' % (self.filename, index))
                 self.write('M=D')
             elif segment == 'pointer':
                 self.hlasm('''
