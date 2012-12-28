@@ -48,8 +48,12 @@ for filename in filenames:
             cw.WritePushPop(t, p.arg1(), p.arg2())
         elif t == 'C_ARITHMETIC':
             cw.writeArithmetic(p.arg1())
+        elif t == 'C_LABEL':
+            cw.writeLabel(p.arg1())
+        elif t == 'C_IF':
+            cw.writeIf(p.arg1())
         else:
-            print('unknown command: %s ; %s' % (t, p.commands[p.offset]))
+            raise SyntaxError('unknown command: %s ; %s' % (t, p.commands[p.offset]))
         p.advance()
 
 cw.Close()
