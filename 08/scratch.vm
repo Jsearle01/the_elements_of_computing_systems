@@ -1,4 +1,5 @@
 // function test 0
 push constant 1
 pop local 1
+push local 1
 // return

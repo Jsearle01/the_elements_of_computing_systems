@@ -266,6 +266,9 @@ class CodeWriter:
             ''')
         else:
             asm('@{}', source.lstrip('*'))
+            while source[1] == '*':
+                asm('A=M')
+                source = source[1:]
             if source[0] == '*': asm('D=M')
             else:                asm('D=A')
 
@@ -296,8 +299,9 @@ class CodeWriter:
             ''')
         else:
             asm('@{}', dest.lstrip('*'))
-            if dest[0] == '*':
+            while dest[0] == '*':
                 asm('A=M')
+                dest = dest[1:]
             asm('M=D')
 
     def macro_goto(self, address):
@@ -332,28 +336,20 @@ class CodeWriter:
     def macro_increment_by(self, address, amount):
         if amount == 1:
             macro_increment(address)
+        elif address == 'D':
+            asm('''
+            @{0}
+            D=D+A
+            ''', amount)
         else:
             asm('''
             @{1}
-            D=A
-            A{0}
+            D=M
+            @{0}
+            D=D+A
             M=M+D
             ''', address, amount)
 
-    def store_segment_pointer(self, dest, segment, index):
-        asm('''
-        @{0}
-
-        # increment pointer by index
-        D=M
-        @{1}
-        D=D+A
-
-        # store pointer
-        @{2}
-        M=D
-        ''', symbols[segment], index, dest)
-            
     def WritePushPop(self, command, segment, index):
         asm('''
         ,stamp 8
@@ -399,13 +395,13 @@ class CodeWriter:
                 ,push D
                 ''', segment.upper(), index)
             else:
-                self.store_segment_pointer('R13', segment, index)
-                self.hlasm('''
-                @R13
-                A=M
-                D=M
+                asm('''
+                ,set D *{symbol}
+                ,+= D {index}
+                ,set R13 D
+                ,set D **R13
                 ,push D
-                ''')
+                ''', symbol=symbols[segment], index=index)
         elif command == 'C_POP':
             if segment == 'temp':
                 asm('''
@@ -446,17 +442,13 @@ class CodeWriter:
                 M=D
                 ''', thisthat[segment], index)
             else:
-                asm('@32323')
-                # self.store_segment_pointer('R13', segment, index)
                 asm('''
                 ,set D *{symbol}
                 ,+= D {index}
-                # ,set R13 D
-                @32300
+                ,set R13 D
+                ,pop D
+                ,set *R13 D
                 ''', symbol=symbols[segment], index=index)
-                asm('@32324')
-                asm(',pop D')
-                asm(',set *R13 D')
         else:
             raise SyntaxError('unknown pushPop: %s ; %s ; %s' % (command, segment, index))
 
