@@ -151,46 +151,38 @@ class CodeWriter:
             ,-- SP
             A=M
             D=D-M
-            ''')
-
-            symbol_id = self.get_id()
-
-            self.write('@EQ_TRUE_%s' % symbol_id)
-            self.write('D;JEQ')
-            self.write('D=0')
-            self.write('@EQ_END_%s' % symbol_id)
-            self.write('0;JMP')
-            self.write('(EQ_TRUE_%s)' % symbol_id)
-            self.write('D=-1')
-            self.write('(EQ_END_%s)' % symbol_id)
-            self.push_D()
+            @EQ_TRUE_{0}
+            D;JEQ
+            D=0
+            @EQ_END_{0}
+            0;JMP
+            (EQ_TRUE_{0})
+            D=-1
+            (EQ_END_{0})
+            ,push D
+            ''', self.get_id())
         elif command == 'gt':
             asm('''
             ,pop D
             ,-- SP
             A=M
             D=D-M
-            ''')
-
-            symbol_id = self.get_id()
-
-            self.write('@GT_TRUE_%s' % symbol_id)
-            self.write('D;JLT')
-            self.write('D=0')
-            self.write('@GT_END_%s' % symbol_id)
-            self.write('0;JMP')
-            self.write('(GT_TRUE_%s)' % symbol_id)
-            self.write('D=-1')
-            self.write('(GT_END_%s)' % symbol_id)
-            self.push_D()
+            @GT_TRUE_{0}
+            D;JLT
+            D=0
+            @GT_END_{0}
+            0;JMP
+            (GT_TRUE_{0})
+            D=-1
+            (GT_END_{0})
+            ,push D
+            ''', self.get_id())
         elif command == 'lt':
             asm('''
             ,pop D
             ,-- SP
             A=M
-
             D=D-M
-
             @LT_TRUE_{0}
             D;JGT
             D=0
@@ -369,12 +361,6 @@ class CodeWriter:
         M=D
         ''', symbols[segment], index, dest)
             
-    def set_memory_to_D(self, dest):
-        asm('''
-        @{0}
-        M=D
-        ''', dest)
-
     def WritePushPop(self, command, segment, index):
         asm('''
         ,stamp 8
