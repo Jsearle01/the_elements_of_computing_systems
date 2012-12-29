@@ -3,8 +3,9 @@
 from VMParser import VMParser
 from CodeWriter import CodeWriter
 
-from os.path import splitext, isdir
+from os.path import splitext, isdir, join
 from argparse import ArgumentParser
+from glob import glob
 
 import sys
 
@@ -33,16 +34,16 @@ else:
 cw = CodeWriter(output_file)
 
 if isdir(args.source):
-    pass
+    filenames = glob(join(args.source, '*.vm'))
 else:
     filenames = [args.source]
+
+cw.writeInit()
 
 for filename in filenames:
     cw.setFileName(filename)
     p = VMParser(filename)
     while p.hasMoreCommands():
-        #cw.WritePushPop(command, segment, index)
-        #cw.writeArithmetic(command)
         t = p.commandType()
         if t in ['C_PUSH', 'C_POP']:
             cw.WritePushPop(t, p.arg1(), p.arg2())
