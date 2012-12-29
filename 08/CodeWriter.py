@@ -115,37 +115,36 @@ class CodeWriter:
         asm('''
         ,stamp 6
         # FRAME = LCL
-            ,set {FRAME} LCL
+            ,set {FRAME} *LCL
         # RET = *(FRAME-5)
-            ,set {RET} {FRAME}
+            ,set {RET} *{FRAME}
             ,-= {RET} 5
-            ,set {RET} *{RET}
         # *ARG = pop()
             ,pop D
             ,set *ARG D
         # SP = ARG+1
-            ,set D ARG
+            ,set D *ARG
             ,+= D 1
             ,set SP D
         # THAT = *(FRAME-1)
-            ,set THAT {FRAME}
+            ,set THAT *{FRAME}
             ,-= THAT 1
-            ,set THAT *THAT
+            ,set THAT **THAT
         # THIS = *(FRAME-2)
-            ,set THIS {FRAME}
+            ,set THIS *{FRAME}
             ,-= THIS 2
-            ,set THIS *THIS
+            ,set THIS **THIS
         # ARG  = *(FRAME-3)
-            ,set ARG {FRAME}
+            ,set ARG *{FRAME}
             ,-= ARG 3
-            ,set ARG *ARG
+            ,set ARG **ARG
         # LCL  = *(FRAME-4)
-            ,set LCL {FRAME}
+            ,set LCL *{FRAME}
             ,-= LCL 4
-            ,set LCL *LCL
+            ,set LCL **LCL
         # goto RET
-            ,goto {RET}
-        ''', TEMP='R13', FRAME='R14', RET='R15')
+            ,goto *{RET}
+        ''', FRAME='R14', RET='R15')
 
     def writeArithmetic(self, command):
         asm(',stamp 7')
@@ -165,7 +164,7 @@ class CodeWriter:
             asm('''
             ,pop D
             ,-- SP
-            A=M
+            5=M
             D=D-M
             @EQ_TRUE_{0}
             D;JEQ
@@ -323,10 +322,10 @@ class CodeWriter:
             asm('M=D')
 
     def macro_goto(self, address):
-        asm('''
-        @{}
-        0;JMP
-        ''', address)
+        asm('@{}', address.lstrip('*'))
+        for i in range(address.count('*')):
+            asm('A=M')
+        asm('0;JMP')
 
     def macro_decrement(self, symbol):
         asm('''
