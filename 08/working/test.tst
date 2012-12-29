@@ -1,21 +1,28 @@
 // This file is part of www.nand2tetris.org
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
-// File name: projects/08/ProgramFlow/FibonacciSeries/FibonacciSeries.tst
+// File name: projects/08/FunctionCalls/SimpleFunction/SimpleFunction.tst
 
-load test.asm,
-output-file test.out,
-compare-to test.cmp,
-output-list RAM[3000]%D1.6.2 RAM[3001]%D1.6.2 RAM[3002]%D1.6.2 
-            RAM[3003]%D1.6.2 RAM[3004]%D1.6.2 RAM[3005]%D1.6.2;
+load SimpleFunction.asm,
+output-file SimpleFunction.out,
+compare-to SimpleFunction.cmp,
+output-list RAM[0]%D1.6.1 RAM[1]%D1.6.1 RAM[2]%D1.6.1 
+            RAM[3]%D1.6.1 RAM[4]%D1.6.1 RAM[310]%D1.6.1;
 
-set RAM[0] 256,
-set RAM[1] 300,
-set RAM[2] 400,
-set RAM[400] 6,
-set RAM[401] 3000,
+set RAM[0] 317,
+set RAM[1] 317,
+set RAM[2] 310,
+set RAM[3] 3000,
+set RAM[4] 4000,
+set RAM[310] 1234,
+set RAM[311] 37,
+set RAM[312] 1000,
+set RAM[313] 305,
+set RAM[314] 300,
+set RAM[315] 3010,
+set RAM[316] 4010,
 
-repeat 1100 {
+repeat 300 {
   ticktock;
 }
 

@@ -1,7 +1,10 @@
-all: test
+all: scratch
+
+scratch:
+	./VMtranslator.py scratch.vm
 
 test:
-	./VMtranslator.py working/test.vm
+	./VMtranslator.py working/SimpleFunction.vm
 	cpuemu working/test.tst
 
 BasicLoop:
@@ -12,3 +15,7 @@ FibonacciSeries:
 	./VMtranslator.py ProgramFlow/FibonacciSeries/FibonacciSeries.vm
 	cpuemu ProgramFlow/FibonacciSeries/FibonacciSeries.tst
  
+SimpleFunction:
+	./VMtranslator.py FunctionCalls/SimpleFunction/SimpleFunction.vm
+	cpuemu FunctionCalls/SimpleFunction/SimpleFunction.vm
+

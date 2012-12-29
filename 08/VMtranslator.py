@@ -54,6 +54,10 @@ for filename in filenames:
             cw.writeGoto(p.arg1())
         elif t == 'C_IF':
             cw.writeIf(p.arg1())
+        elif t == 'C_FUNCTION':
+            cw.writeFunction(p.arg1(), p.arg2())
+        elif t == 'C_RETURN':
+            cw.writeReturn()
         else:
             raise SyntaxError('unknown command: %s ; %s' % (t, p.commands[p.offset]))
         p.advance()
