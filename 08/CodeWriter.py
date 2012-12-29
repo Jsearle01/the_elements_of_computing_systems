@@ -66,7 +66,9 @@ class CodeWriter:
     def writeInit(self):
         asm('''
         ,stamp 0
+        ,set SP 256
         ''')
+        self.writeCall('Sys.init', '0')
 
     def writeLabel(self, label):
         asm('''
@@ -92,18 +94,36 @@ class CodeWriter:
     def writeCall(self, functionName, numArgs):
         asm('''
         ,stamp 4
+
         # push return-address
+            ,set D return_{uid}
+            ,push D
         # push LCL
+            ,push *LCL
         # push ARG
+            ,push *ARG
         # push THIS
+            ,push *THIS
         # push THAT
+            ,push *THAT
         # ARG=SP-n-5
+            ,set ARG *SP
+            ,-= ARG {numArgs}
+            ,-= ARG 5
         # LCL=SP
+            ,set LCL *SP
         # goto f
+            ,goto {functionName}
         # (return-address)
-        ''')
+            (return_{uid})
+        ''',
+        functionName = functionName,
+        numArgs=numArgs,
+        uid = unique_id()
+        )
 
     def writeFunction(self, functionName, numLocals):
+        self.current_function = functionName
         asm('''
         ,stamp 5
         ({0})
@@ -143,7 +163,7 @@ class CodeWriter:
             ,-= LCL 4
             ,set LCL **LCL
         # goto RET
-            ,goto *{RET}
+            ,goto **{RET}
         ''', FRAME='R14', RET='R15')
 
     def writeArithmetic(self, command):
@@ -243,11 +263,14 @@ class CodeWriter:
             asm(',set *SP D')
             asm(',++ SP')
         else:
+            asm('@{}', address.lstrip('*'))
+            while address[0] == '*':
+                asm('A=M')
+                address = address[1:]
             asm('''
-            @{0}
             D=A
             ,push D
-            ''', address)
+            ''')
 
     def macro_stamp(self, id_number):
         asm('''

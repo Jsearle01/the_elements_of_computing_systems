@@ -1,17 +1,20 @@
-all: SimpleFunction
+all: scratch
 
-scratch:
-	./VMtranslator.py scratch.vm
+scratch: scratch/
+	./run.sh scratch/FibonacciElement
 
 BasicLoop:
 	./run.sh ProgramFlow/BasicLoop
 
 FibonacciSeries:
-	./run.sh ProgramFlow/FibonacciSeries
+	./run.sh ProgramFlow/FibonacciSeries --no-bootstrap
  
 SimpleFunction:
 	./run.sh FunctionCalls/SimpleFunction
 
 FibonacciElement:
 	./run.sh FunctionCalls/FibonacciElement
+
+StaticsTest:
+	./run.sh FunctionCalls/StaticsTest
 

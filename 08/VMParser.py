@@ -18,7 +18,7 @@ commandTypes = {
         'if-goto' : 'C_IF',
         'function': 'C_FUNCTION',
         'return'  : 'C_RETURN',
-        ''        : 'C_ALL'
+        'call'    : 'C_CALL'
         }
 
 class VMParser:
