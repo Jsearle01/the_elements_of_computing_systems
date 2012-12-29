@@ -1,5 +1,4 @@
 from itertools import count
-from functools import partial
 
 import os.path
 import re
@@ -27,11 +26,16 @@ macro_aliases = {
 
 class CodeWriter:
     def __init__(self, output_file):
+        self.file = output_file
+        self.current_function = ''
+        self.setup_global_functions()
+
+    def setup_global_functions(self):
         global asm
         asm = self.hlasm
-        self.file = output_file
-        self.get_id = count().__next__
-        self.current_function = ''
+
+        global unique_id
+        unique_id = count().__next__
 
     def write(self, s):
         self.file.write(s)
@@ -105,31 +109,43 @@ class CodeWriter:
         ({0})
         ''', functionName)
         for i in range(int(numLocals)):
-            asm(',push constant 0')
+            asm(',push 0')
 
     def writeReturn(self):
         asm('''
         ,stamp 6
         # FRAME = LCL
-        ,set R13 LCL
+            ,set {FRAME} LCL
         # RET = *(FRAME-5)
-        ,set R14 R13
-        ,-= R14 5
-        ,set R15 *R14
+            ,set {RET} {FRAME}
+            ,-= {RET} 5
+            ,set {RET} *{RET}
         # *ARG = pop()
-        ,pop D
-        set *ARG D
+            ,pop D
+            ,set *ARG D
         # SP = ARG+1
-        ,set D ARG
-        ,+= D 1
-        ,set SP D
+            ,set D ARG
+            ,+= D 1
+            ,set SP D
         # THAT = *(FRAME-1)
+            ,set THAT {FRAME}
+            ,-= THAT 1
+            ,set THAT *THAT
         # THIS = *(FRAME-2)
+            ,set THIS {FRAME}
+            ,-= THIS 2
+            ,set THIS *THIS
         # ARG  = *(FRAME-3)
+            ,set ARG {FRAME}
+            ,-= ARG 3
+            ,set ARG *ARG
         # LCL  = *(FRAME-4)
+            ,set LCL {FRAME}
+            ,-= LCL 4
+            ,set LCL *LCL
         # goto RET
-        ,goto R15
-        ''')
+            ,goto {RET}
+        ''', TEMP='R13', FRAME='R14', RET='R15')
 
     def writeArithmetic(self, command):
         asm(',stamp 7')
@@ -160,7 +176,7 @@ class CodeWriter:
             D=-1
             (EQ_END_{0})
             ,push D
-            ''', self.get_id())
+            ''', unique_id())
         elif command == 'gt':
             asm('''
             ,pop D
@@ -176,7 +192,7 @@ class CodeWriter:
             D=-1
             (GT_END_{0})
             ,push D
-            ''', self.get_id())
+            ''', unique_id())
         elif command == 'lt':
             asm('''
             ,pop D
@@ -192,7 +208,7 @@ class CodeWriter:
             D=-1
             (LT_END_{0})
             ,push D
-            ''', self.get_id())
+            ''', unique_id())
 
         else:
             asm('''
@@ -209,28 +225,30 @@ class CodeWriter:
 
             asm(',push D')
 
-    def macro_pop(self, dest):
-        if dest == 'D':
+    def macro_pop(self, address):
+        if address == 'D':
             asm('''
             ,-- SP
             A=M
             D=M
             ''')
         else:
-            raise Error('unknown pop destination')
+            asm('''
+            ,pop D
+            @{0}
+            M=D
+            ''', address)
 
-    def macro_push(self, source, value=None):
-        if source == 'D':
+    def macro_push(self, address):
+        if address == 'D':
             asm(',set *SP D')
             asm(',++ SP')
-        elif source == 'constant':
+        else:
             asm('''
             @{0}
             D=A
             ,push D
-            ''', value)
-        else:
-            raise Error('unknown push destination')
+            ''', address)
 
     def macro_stamp(self, id_number):
         asm('''
@@ -329,7 +347,7 @@ class CodeWriter:
             asm('''
             @{1}
             D=A
-            A{0}
+            @{0}
             M=M-D
             ''', address, amount)
 
@@ -356,7 +374,7 @@ class CodeWriter:
         ''')
         if command == 'C_PUSH':
             if segment == 'constant':
-                asm(',push constant {0}', index)
+                asm(',push {0}', index)
             elif segment == 'static':
                 asm('''
                 @{0}.{1}
