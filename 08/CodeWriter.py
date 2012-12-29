@@ -37,9 +37,9 @@ class CodeWriter:
         self.file.write(s)
         self.file.write('\n')
 
-    def hlasm(self, s, *args):
+    def hlasm(self, s, *args, **kargs):
         lines = []
-        for line in s.format(*args).split('\n'):
+        for line in s.format(*args, **kargs).split('\n'):
             line = re.sub(r'\s*#.*', '', line).strip()
             if line != '':
                 lines.append(line)
