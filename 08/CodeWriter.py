@@ -265,7 +265,7 @@ class CodeWriter:
             D=M
             ''')
         else:
-            asm('@{}', source)
+            asm('@{}', source.lstrip('*'))
             if source[0] == '*': asm('D=M')
             else:                asm('D=A')
 
@@ -295,17 +295,10 @@ class CodeWriter:
             M=D
             ''')
         else:
+            asm('@{}', dest.lstrip('*'))
             if dest[0] == '*':
-                asm('''
-                @{}
-                A=M
-                M=D
-                ''', dest[1:])
-            else:
-                asm('''
-                @{}
-                M=D
-                ''', dest)
+                asm('A=M')
+            asm('M=D')
 
     def macro_goto(self, address):
         asm('''
@@ -453,7 +446,15 @@ class CodeWriter:
                 M=D
                 ''', thisthat[segment], index)
             else:
-                self.store_segment_pointer('R13', segment, index)
+                asm('@32323')
+                # self.store_segment_pointer('R13', segment, index)
+                asm('''
+                ,set D *{symbol}
+                ,+= D {index}
+                # ,set R13 D
+                @32300
+                ''', symbol=symbols[segment], index=index)
+                asm('@32324')
                 asm(',pop D')
                 asm(',set *R13 D')
         else:
