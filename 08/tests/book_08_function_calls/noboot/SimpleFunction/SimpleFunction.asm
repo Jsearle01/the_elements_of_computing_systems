@@ -15,8 +15,6 @@ M=D
 M=M+1
 @LCL
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -65,8 +63,6 @@ M=D
 M=M+1
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13

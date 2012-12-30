@@ -26,8 +26,6 @@ M=D
 M=M+1
 @THAT
 D=M
-@0
-D=D+A
 @R13
 M=D
 @SP
@@ -46,8 +44,7 @@ M=D
 M=M+1
 @THAT
 D=M
-@1
-D=D+A
+D=D+1
 @R13
 M=D
 @SP
@@ -59,8 +56,6 @@ A=M
 M=D
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -94,8 +89,6 @@ M=D
 M=M+1
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @SP
@@ -108,8 +101,6 @@ M=D
 ($MAIN_LOOP_START)
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -130,9 +121,7 @@ D;JNE
 0;JMP
 ($COMPUTE_ELEMENT)
 @THAT
-D=M
-@0
-A=D+A
+A=M
 D=M
 @SP
 A=M
@@ -210,8 +199,6 @@ D=M
 M=D
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -245,8 +232,6 @@ M=D
 M=M+1
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @SP

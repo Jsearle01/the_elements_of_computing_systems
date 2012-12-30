@@ -396,7 +396,9 @@ class CodeWriter:
             ''', address)
 
     def macro_decrement_by(self, address, amount):
-        if amount == '1':
+        if amount == '0':
+            pass
+        elif amount == '1':
             self.macro_decrement(address)
         elif address == 'D':
             asm('''
@@ -420,7 +422,9 @@ class CodeWriter:
             ''', address, amount)
 
     def macro_increment_by(self, address, amount):
-        if amount == '1':
+        if amount == '0':
+            pass
+        elif amount == '1':
             self.macro_increment(address)
         elif address == 'D':
             asm('''
@@ -476,9 +480,7 @@ class CodeWriter:
                 # push temp index -> onto the stack
                 asm('''
                 @R5
-                D=A
-                @{0}
-                A=D+A
+                ,+= A {0}
                 D=M
                 ,push D
                 ''', index)
@@ -493,14 +495,22 @@ class CodeWriter:
                 ,push D
                 ''', dest)
             elif segment == 'this' or segment == 'that':
+                asm('@{}', segment.upper())
+
+                if index == '0':
+                    asm('A=M')
+                else:
+                    asm('''
+                    D=M
+                    @{}
+                    A=D+A
+                    ''', index)
+                    pass
+
                 asm('''
-                @{0}
-                D=M
-                @{1}
-                A=D+A
                 D=M
                 ,push D
-                ''', segment.upper(), index)
+                ''')
             else:
                 asm('''
                 ,set D *{symbol}
@@ -515,8 +525,7 @@ class CodeWriter:
                 asm('''
                 @R5
                 D=A
-                @{0}
-                D=D+A
+                ,+= D {0}
                 @R13
                 M=D
                 ,pop D
@@ -540,8 +549,7 @@ class CodeWriter:
                 asm('''
                 @{0}
                 D=M
-                @{1}
-                D=D+A
+                ,+= D {1}
                 @R13
                 M=D
                 ,pop D

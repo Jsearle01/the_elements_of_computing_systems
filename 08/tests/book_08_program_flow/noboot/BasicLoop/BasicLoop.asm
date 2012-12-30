@@ -7,8 +7,6 @@ M=D
 M=M+1
 @LCL
 D=M
-@0
-D=D+A
 @R13
 M=D
 @SP
@@ -21,8 +19,6 @@ M=D
 ($LOOP_START)
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -35,8 +31,6 @@ M=D
 M=M+1
 @LCL
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -62,8 +56,6 @@ M=D
 M=M+1
 @LCL
 D=M
-@0
-D=D+A
 @R13
 M=D
 @SP
@@ -75,8 +67,6 @@ A=M
 M=D
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -110,8 +100,6 @@ M=D
 M=M+1
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @SP
@@ -123,8 +111,6 @@ A=M
 M=D
 @ARG
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13
@@ -143,8 +129,6 @@ D=M
 D;JNE
 @LCL
 D=M
-@0
-D=D+A
 @R13
 M=D
 @R13

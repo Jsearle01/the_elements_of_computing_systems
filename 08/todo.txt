@@ -1,26 +1,7 @@
 optimize code generation
 
-@0
-D=D+A
-
-A=D
-D=A    --> D=M
-
-
 @x
 D=M
 @x
 M=D
-
-
-increment_by is buggy
-    doesn't work
-        ,= SP 1
-
-    does work
-        ++ SP
-
-unneccecery jumps
-    06 | @8
-    07 | 0;JMP
 
