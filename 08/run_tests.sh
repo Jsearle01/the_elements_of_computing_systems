@@ -4,17 +4,17 @@ function log () {
     echo `date "+%Y%m%d %H:%M:%S"` $* >> test_log.txt
 }
 
-function run_tests() {
+function run_tests_in_dir() {
     for test in $1/* ; do
         if [[ -d $test ]]; then
-            ./run.sh $test $2 > .test.out
+            ./run.sh $test $2 &> .test.out
+
             if (( $? > 0 )); then
                 log fail $test
                 FAIL=$((FAIL+1))
-                echo fail: $test
+                printf "%-18s : %s\n" `basename $test` $test | tee -a .test_fails
                 echo
                 cat .test.out
-                echo
                 echo
             else
                 log pass $test
@@ -27,12 +27,11 @@ function run_tests() {
 PASS=0
 FAIL=0
 
+rm -f .test_fails
 for tests in tests/* ; do
-    run_tests $tests/boot
-    run_tests $tests/noboot --no-bootstrap
+    run_tests_in_dir $tests/boot
+    run_tests_in_dir $tests/noboot --no-bootstrap
 done
-
-exit
 
 TOTAL=$((PASS+FAIL))
 
@@ -44,6 +43,7 @@ echo
 if (($FAIL == 0)); then
     echo ALL PASSED
 else
-    echo Fails
+    echo Failed:
+    cat .test_fails
 fi
 
