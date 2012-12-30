@@ -1,11 +1,3 @@
-@12345
-@12300
-@256
-D=A
-@SP
-M=D
-@Sys.init
-0;JMP
 (SimpleFunction.test)
 @12345
 @12305

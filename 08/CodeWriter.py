@@ -67,9 +67,8 @@ class CodeWriter:
         asm('''
         ,stamp 0
         ,set SP 256
-        ,goto Sys.init
         ''')
-        #self.writeCall('Sys.init', '0')
+        self.writeCall('Sys.init', '0')
 
     def writeLabel(self, label):
         asm('''

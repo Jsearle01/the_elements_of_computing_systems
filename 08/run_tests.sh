@@ -7,7 +7,7 @@ function log () {
 function run_tests_in_dir() {
     for test in $1/* ; do
         if [[ -d $test ]]; then
-            ./run.sh $test $2 &> .test.out
+            ./build_and_run.sh $test $2 &> .test.out
 
             if (( $? > 0 )); then
                 log fail $test
