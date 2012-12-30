@@ -14,6 +14,8 @@ if (($? != 0)); then
     cat $1/*.cmp
     echo "\n====\n"
     cat $1/*.out
+    echo
+    cpuemu $FILE.tst
     exit
 fi
 

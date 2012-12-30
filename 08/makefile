@@ -1,7 +1,10 @@
-all: scratch
+all: callReturn
 
 scratch: scratch/
-	./run.sh scratch/FibonacciElement
+	./run.sh scratch/StaticsTest
+
+callReturn:
+	./run.sh scratch/callReturn
 
 BasicLoop:
 	./run.sh ProgramFlow/BasicLoop

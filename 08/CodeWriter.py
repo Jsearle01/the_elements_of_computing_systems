@@ -67,8 +67,9 @@ class CodeWriter:
         asm('''
         ,stamp 0
         ,set SP 256
+        ,goto Sys.init
         ''')
-        self.writeCall('Sys.init', '0')
+        #self.writeCall('Sys.init', '0')
 
     def writeLabel(self, label):
         asm('''
@@ -125,8 +126,8 @@ class CodeWriter:
     def writeFunction(self, functionName, numLocals):
         self.current_function = functionName
         asm('''
-        ,stamp 5
         ({0})
+        ,stamp 5
         ''', functionName)
         for i in range(int(numLocals)):
             asm(',push 0')
@@ -139,13 +140,13 @@ class CodeWriter:
         # RET = *(FRAME-5)
             ,set {RET} *{FRAME}
             ,-= {RET} 5
+            ,set {RET} **{RET}
         # *ARG = pop()
             ,pop D
             ,set *ARG D
         # SP = ARG+1
-            ,set D *ARG
-            ,+= D 1
-            ,set SP D
+            ,set SP *ARG
+            ,++ SP
         # THAT = *(FRAME-1)
             ,set THAT *{FRAME}
             ,-= THAT 1
@@ -163,8 +164,8 @@ class CodeWriter:
             ,-= LCL 4
             ,set LCL **LCL
         # goto RET
-            ,goto **{RET}
-        ''', FRAME='R14', RET='R15')
+            ,goto *{RET}
+        ''', FRAME='R13', RET='R14')
 
     def writeArithmetic(self, command):
         asm(',stamp 7')
@@ -243,6 +244,15 @@ class CodeWriter:
             else: asm('arithmetic: %s' % command)
 
             asm(',push D')
+
+    def writeBreakpoint(self, breakpoint_id):
+        asm('''
+        @{0}
+        @{1}
+        ''',
+        23456,
+        23400 + int(breakpoint_id)
+        )
 
     def macro_pop(self, address):
         if address == 'D':
@@ -363,8 +373,8 @@ class CodeWriter:
         ''', address)
 
     def macro_decrement_by(self, address, amount):
-        if amount == 1:
-            macro_decrement(address)
+        if amount == '1':
+            self.macro_decrement(address)
         else:
             asm('''
             @{1}
@@ -374,8 +384,8 @@ class CodeWriter:
             ''', address, amount)
 
     def macro_increment_by(self, address, amount):
-        if amount == 1:
-            macro_increment(address)
+        if amount == '1':
+            self.macro_increment(address)
         elif address == 'D':
             asm('''
             @{0}
@@ -391,10 +401,8 @@ class CodeWriter:
             ''', address, amount)
 
     def WritePushPop(self, command, segment, index):
-        asm('''
-        ,stamp 8
-        ''')
         if command == 'C_PUSH':
+            asm(',stamp 8')
             if segment == 'constant':
                 asm(',push {0}', index)
             elif segment == 'static':
@@ -443,6 +451,7 @@ class CodeWriter:
                 ,push D
                 ''', symbol=symbols[segment], index=index)
         elif command == 'C_POP':
+            asm(',stamp 9')
             if segment == 'temp':
                 asm('''
                 @R5
@@ -455,7 +464,7 @@ class CodeWriter:
                 @R13
                 A=M
                 M=D
-                '''. index)
+                ''', index)
             elif segment == 'static':
                 asm('''
                 ,pop D
