@@ -170,11 +170,9 @@ A=M
 D=M
 @LCL
 M=D
-@23456
 @R14
 A=M
 0;JMP
-@23456
 @12345
 @12301
 (Main.fibonacci$IF_FALSE)
@@ -473,11 +471,9 @@ A=M
 D=M
 @LCL
 M=D
-@23456
 @R14
 A=M
 0;JMP
-@23456
 (Sys.init)
 @12345
 @12305

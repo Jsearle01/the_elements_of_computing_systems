@@ -2,43 +2,67 @@
 import re
 
 commandTypes = {
-        'add'     : 'C_ARITHMETIC',
-        'sub'     : 'C_ARITHMETIC',
-        'neg'     : 'C_ARITHMETIC',
-        'eq'      : 'C_ARITHMETIC',
-        'gt'      : 'C_ARITHMETIC',
-        'lt'      : 'C_ARITHMETIC',
-        'and'     : 'C_ARITHMETIC',
-        'or'      : 'C_ARITHMETIC',
-        'not'     : 'C_ARITHMETIC',
-        'push'    : 'C_PUSH',
-        'pop'     : 'C_POP',
-        'label'   : 'C_LABEL',
-        'goto'    : 'C_GOTO',
-        'if-goto' : 'C_IF',
-        'function': 'C_FUNCTION',
-        'return'  : 'C_RETURN',
-        'call'    : 'C_CALL',
-        'breakpoint'    : 'C_BREAKPOINT'
+        'add'       : 'C_ARITHMETIC',
+        'sub'       : 'C_ARITHMETIC',
+        'neg'       : 'C_ARITHMETIC',
+        'eq'        : 'C_ARITHMETIC',
+        'gt'        : 'C_ARITHMETIC',
+        'lt'        : 'C_ARITHMETIC',
+        'and'       : 'C_ARITHMETIC',
+        'or'        : 'C_ARITHMETIC',
+        'not'       : 'C_ARITHMETIC',
+        'push'      : 'C_PUSH',
+        'pop'       : 'C_POP',
+        'label'     : 'C_LABEL',
+        'goto'      : 'C_GOTO',
+        'if-goto'   : 'C_IF',
+        'function'  : 'C_FUNCTION',
+        'return'    : 'C_RETURN',
+        'call'      : 'C_CALL',
+        'breakpoint': 'C_BREAKPOINT',
+        'hlasm'     : 'C_HLASM'
         }
+
+def read_till(f, end_marker):
+    lines = []
+    while True:
+        line = f.readline()
+        if line == '':
+            raise SyntaxError('reached EOF while parsing hlasm command')
+        line = line.strip()
+        if line == end_marker:
+            return lines
+        else:
+            lines.append(line)
 
 class VMParser:
     def __init__(self, filename):
         self.commands = []
         self.offset = 0
-        line_number = -1
-
+        parsing = True
         f = open(filename)
-        for line in f.readlines():
-            line_number += 1
-            line = re.sub(r"//.*", "",line)
-            line = line.strip()
-            if line == '': continue
-            self.parseLine(line, line_number)
+        while parsing:
+            parsing = self.parseLine(f)
         f.close()
 
-    def parseLine(self, line, line_number):
-        self.commands.append(line.split())
+    def parseLine(self, f):
+        line = f.readline()
+        if line == '':
+            return False
+
+        line = re.sub(r"//.*", "",line)
+        line = line.strip()
+        if line == '':
+            return True
+
+        words = line.split()
+        if words[0] == 'hlasm':
+            end_marker = words[1]
+            code = read_till(f, words[1])
+            self.commands.append((words[0], '\n'.join(code)))
+        else:
+            self.commands.append(words)
+        return True
 
     def hasMoreCommands(self):
         return self.offset < len(self.commands)

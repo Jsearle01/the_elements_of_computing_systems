@@ -7,7 +7,7 @@ callReturn:
 	./run.sh scratch/callReturn
 
 BasicLoop:
-	./run.sh ProgramFlow/BasicLoop
+	./run.sh ProgramFlow/BasicLoop --no-bootstrap
 
 FibonacciSeries:
 	./run.sh ProgramFlow/FibonacciSeries --no-bootstrap

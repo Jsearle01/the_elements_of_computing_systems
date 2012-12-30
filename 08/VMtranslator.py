@@ -72,6 +72,8 @@ for filename in filenames:
             cw.writeCall(p.arg1(), p.arg2())
         elif t == 'C_BREAKPOINT':
             cw.writeBreakpoint(p.arg1())
+        elif t == 'C_HLASM':
+            cw.writeHLASM(p.arg1())
         else:
             raise SyntaxError('unknown command: %s ; %s' % (t, p.commands[p.offset]))
         p.advance()

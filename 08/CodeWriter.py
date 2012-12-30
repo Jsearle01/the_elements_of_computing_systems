@@ -269,7 +269,17 @@ class CodeWriter:
             ''', address)
 
     def macro_push(self, address):
-        if address == 'D':
+        if address == 'A':
+            asm('''
+            D=A
+            ,push D
+            ''')
+        elif address == 'M':
+            asm('''
+            D=M
+            ,push D
+            ''')
+        elif address == 'D':
             asm(',set *SP D')
             asm(',++ SP')
         else:
@@ -316,9 +326,12 @@ class CodeWriter:
             ''')
         else:
             asm('@{}', source.lstrip('*'))
-            while source[1] == '*':
-                asm('A=M')
-                source = source[1:]
+            try:
+                while source[1] == '*':
+                    asm('A=M')
+                    source = source[1:]
+            except IndexError:
+                pass
             if source[0] == '*': asm('D=M')
             else:                asm('D=A')
 
@@ -360,21 +373,40 @@ class CodeWriter:
             asm('A=M')
         asm('0;JMP')
 
-    def macro_decrement(self, symbol):
-        asm('''
-        @{0}
-        M=M-1
-        ''', symbol)
+    def macro_decrement(self, address):
+        if address in ['D','A','M']:
+            asm('{0}={0}-1', address)
+        else:
+            asm('''
+            @{0}
+            M=M-1
+            ''', address)
         
     def macro_increment(self, address):
-        asm('''
-        @{0}
-        M=M+1
-        ''', address)
+        if address in ['D','A','M']:
+            asm('{0}={0}+1', address)
+        else:
+            asm('''
+            @{0}
+            M=M+1
+            ''', address)
 
     def macro_decrement_by(self, address, amount):
         if amount == '1':
             self.macro_decrement(address)
+        elif address == 'D':
+            asm('''
+            @{amount}
+            D=D+A
+            ''', amount=amount)
+        elif address == 'A':
+            asm('''
+            D=A
+            @{amount}
+            A=D+A
+            ''', amount=amount)
+        elif address == 'M':
+            raise SyntaxError
         else:
             asm('''
             @{1}
@@ -391,6 +423,31 @@ class CodeWriter:
             @{0}
             D=D+A
             ''', amount)
+        elif address == 'A':
+            asm('''
+            D=A
+            @{amount}
+            A=D+A
+            ''', amount=amount)
+        elif address == 'M':
+            asm('''
+            # R13 = A 
+                D=A
+                @R13
+                M=D
+
+            # R14 = M
+                A=D
+                D=M
+                @R14
+                M=D
+
+            @{amount}
+            D=D+A
+            @R13
+            A=M
+            M=D
+            ''', amount=amount)
         else:
             asm('''
             @{1}
@@ -500,6 +557,9 @@ class CodeWriter:
                 ''', symbol=symbols[segment], index=index)
         else:
             raise SyntaxError('unknown pushPop: %s ; %s ; %s' % (command, segment, index))
+
+    def writeHLASM(self, code):
+        asm(code)
 
     def Close(self):
         self.file.close()

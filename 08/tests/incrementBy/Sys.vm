@@ -1,0 +1,24 @@
+function Sys.init 0
+hlasm HLASM
+
+# init
+,set 256 56
+,set 257 57
+
+,set SP 253
+,+= M 3
+
+,push M
+
+,set D 3
+,+= D 6
+,push D
+
+,set A 4
+,+= A 8
+,push A
+
+HLASM
+label LOOP
+goto LOOP
+

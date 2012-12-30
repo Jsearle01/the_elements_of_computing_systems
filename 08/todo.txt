@@ -20,3 +20,7 @@ increment_by is buggy
     does work
         ++ SP
 
+unneccecery jumps
+    06 | @8
+    07 | 0;JMP
+
