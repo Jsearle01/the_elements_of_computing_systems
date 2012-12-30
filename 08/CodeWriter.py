@@ -485,15 +485,11 @@ class CodeWriter:
                 ,push D
                 ''', index)
             elif segment == 'pointer':
-                if index == '0':
-                    dest = 'THIS'
-                else:
-                    dest = 'THAT'
                 asm('''
                 @{}
                 D=M
                 ,push D
-                ''', dest)
+                ''', thisthat[index])
             elif segment == 'this' or segment == 'that':
                 asm('@{}', segment.upper())
 
