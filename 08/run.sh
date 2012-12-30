@@ -4,7 +4,7 @@ FILE=$1/`basename $1`
 
 ./VMtranslator.py $*
 if (($? != 0)); then
-    exit
+    exit 1
 fi
 
 cpuemu $FILE.tst
@@ -16,6 +16,6 @@ if (($? != 0)); then
     cat $1/*.out
     echo
     cpuemu $FILE.tst
-    exit
+    exit 2
 fi
 
