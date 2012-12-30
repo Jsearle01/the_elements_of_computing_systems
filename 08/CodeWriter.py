@@ -241,7 +241,7 @@ class CodeWriter:
             elif command == 'sub': asm('D=-D\nD=D+M')
             elif command == 'and': asm('D=D&M')   # D &= *SP
             elif command == 'or' : asm('D=D|M')   # D |= *SP
-            else: asm('arithmetic: %s' % command)
+            else: raise SyntaxError('unknown arithmetic command')
 
             asm(',push D')
 
@@ -284,13 +284,16 @@ class CodeWriter:
             asm(',++ SP')
         else:
             asm('@{}', address.lstrip('*'))
-            while address[0] == '*':
-                asm('A=M')
-                address = address[1:]
-            asm('''
-            D=A
-            ,push D
-            ''')
+            c = address.count('*')
+            if c == 0:
+                asm('D=A')
+            elif c == 1:
+                asm('D=M')
+            else:
+                for i in range(c - 1):
+                    asm('A=M')
+                D=M
+            asm(',push D')
 
     def macro_stamp(self, id_number):
         if self.stamp:
@@ -475,8 +478,7 @@ class CodeWriter:
                 @R5
                 D=A
                 @{0}
-                D=D+A
-                A=D
+                A=D+A
                 D=M
                 ,push D
                 ''', index)
@@ -495,8 +497,7 @@ class CodeWriter:
                 @{0}
                 D=M
                 @{1}
-                D=D+A
-                A=D
+                A=D+A
                 D=M
                 ,push D
                 ''', segment.upper(), index)

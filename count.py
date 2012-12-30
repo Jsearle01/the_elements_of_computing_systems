@@ -22,5 +22,5 @@ stamps = {
 c = collections.Counter(filter(stamp, map(strip, fileinput.input())))
 
 for line, count in c.most_common(5):
-    print('%4d - %s' % (count, stamps[line]))
+    print('%4d - %s - %s' % (count, line, stamps[line]))
 

@@ -1,11 +1,7 @@
-@12345
-@12300
 @256
 D=A
 @SP
 M=D
-@12345
-@12304
 @return_0
 D=A
 @SP
@@ -65,10 +61,6 @@ M=D
 0;JMP
 (return_0)
 (Main.fibonacci)
-@12345
-@12305
-@12345
-@12308
 @ARG
 D=M
 @0
@@ -83,8 +75,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12308
 @2
 D=A
 @SP
@@ -92,8 +82,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12307
 @SP
 M=M-1
 A=M
@@ -115,23 +103,15 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12303
 @SP
 M=M-1
 A=M
 D=M
 @Main.fibonacci$IF_TRUE
 D;JNE
-@12345
-@12302
 @Main.fibonacci$IF_FALSE
 0;JMP
-@12345
-@12301
 (Main.fibonacci$IF_TRUE)
-@12345
-@12308
 @ARG
 D=M
 @0
@@ -146,8 +126,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12306
 @LCL
 D=M
 @R13
@@ -231,11 +209,7 @@ M=D
 @R14
 A=M
 0;JMP
-@12345
-@12301
 (Main.fibonacci$IF_FALSE)
-@12345
-@12308
 @ARG
 D=M
 @0
@@ -250,8 +224,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12308
 @2
 D=A
 @SP
@@ -259,8 +231,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12307
 @SP
 M=M-1
 A=M
@@ -275,8 +245,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12304
 @return_2
 D=A
 @SP
@@ -333,8 +301,6 @@ M=D
 @Main.fibonacci
 0;JMP
 (return_2)
-@12345
-@12308
 @ARG
 D=M
 @0
@@ -349,8 +315,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12308
 @1
 D=A
 @SP
@@ -358,8 +322,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12307
 @SP
 M=M-1
 A=M
@@ -374,8 +336,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12304
 @return_3
 D=A
 @SP
@@ -432,8 +392,6 @@ M=D
 @Main.fibonacci
 0;JMP
 (return_3)
-@12345
-@12307
 @SP
 M=M-1
 A=M
@@ -447,8 +405,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12306
 @LCL
 D=M
 @R13
@@ -533,10 +489,6 @@ M=D
 A=M
 0;JMP
 (Sys.init)
-@12345
-@12305
-@12345
-@12308
 @4
 D=A
 @SP
@@ -544,8 +496,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12304
 @return_4
 D=A
 @SP
@@ -602,10 +552,6 @@ M=D
 @Main.fibonacci
 0;JMP
 (return_4)
-@12345
-@12301
 (Sys.init$WHILE)
-@12345
-@12302
 @Sys.init$WHILE
 0;JMP

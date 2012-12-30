@@ -1,11 +1,7 @@
-@12345
-@12300
 @256
 D=A
 @SP
 M=D
-@12345
-@12304
 @return_0
 D=A
 @SP
@@ -65,8 +61,6 @@ M=D
 0;JMP
 (return_0)
 (Sys.init)
-@12345
-@12305
 @56
 D=A
 @256
@@ -118,10 +112,6 @@ A=M
 M=D
 @SP
 M=M+1
-@12345
-@12301
 (Sys.init$LOOP)
-@12345
-@12302
 @Sys.init$LOOP
 0;JMP

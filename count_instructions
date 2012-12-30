@@ -1,0 +1,13 @@
+#! /usr/bin/env gawk -f
+
+BEGIN {
+    a = 0
+}
+
+/^[^(]/ {
+    a += 1
+}
+
+END {
+    print "cmds: " a
+}
