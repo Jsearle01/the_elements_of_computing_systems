@@ -25,10 +25,11 @@ macro_aliases = {
         }
 
 class CodeWriter:
-    def __init__(self, output_file):
+    def __init__(self, output_file, stamp=False):
         self.file = output_file
         self.current_function = ''
         self.setup_global_functions()
+        self.stamp = stamp
 
     def setup_global_functions(self):
         global asm
@@ -184,7 +185,7 @@ class CodeWriter:
             asm('''
             ,pop D
             ,-- SP
-            5=M
+            A=M
             D=D-M
             @EQ_TRUE_{0}
             D;JEQ
@@ -292,10 +293,11 @@ class CodeWriter:
             ''')
 
     def macro_stamp(self, id_number):
-        asm('''
-        @{0}
-        @{1}
-        ''', 12345, 12300 + int(id_number))
+        if self.stamp:
+            asm('''
+            @{0}
+            @{1}
+            ''', 12345, 12300 + int(id_number))
 
     def macro_set(self, dest, source):
         # set D to source
@@ -405,7 +407,7 @@ class CodeWriter:
             A=D+A
             ''', amount=amount)
         elif address == 'M':
-            raise SyntaxError
+            raise SyntaxError('not implemented')
         else:
             asm('''
             @{1}

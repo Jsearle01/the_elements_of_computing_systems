@@ -27,6 +27,11 @@ argument_parser.add_argument('--no-bootstrap',
     action='store_false',
     help='don\'t insert bootstrap code')
 
+argument_parser.add_argument('--stamp',
+    dest='stamp',
+    action='store_true',
+    help='stamp all VM instructions')
+
 args = argument_parser.parse_args()
 
 if isdir(args.source):
@@ -43,8 +48,7 @@ if args.stdout:
 else:
     output_file = open(output_filename, "w")
 
-
-cw = CodeWriter(output_file)
+cw = CodeWriter(output_file, args.stamp)
 
 if args.bootstrap:
     cw.writeInit()
