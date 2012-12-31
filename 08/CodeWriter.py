@@ -222,19 +222,22 @@ class CodeWriter:
             jump=jumps[command],
             id=unique_id())
 
-        else:
+        elif command in ['add', 'sub', 'and', 'or']:
             # uses two arguments
             asm('''
             @SP
             M=M-1
+
             A=M
             D=M
-            A=A-1
 
+            A=A-1
             M=M{operator}D
             ''',
             operator = operators[command]
             )
+        else:
+            raise SyntaxError('unknown arithmetic operator')
 
     def writeBreakpoint(self, breakpoint_id):
         asm('''
