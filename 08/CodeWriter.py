@@ -516,7 +516,6 @@ class CodeWriter:
                 asm('''
                 ,pop D
                 @{}
-                #A=M
                 M=D
                 ''', symbols[(segment, index)])
             elif segment == 'static':
@@ -531,19 +530,7 @@ class CodeWriter:
                 @{}
                 M=D
                 ''', thisthat[index])
-            elif segment in ['this', 'that']:
-                asm('''
-                @{0}
-                D=M
-                ,+= D {1}
-                @R13
-                M=D
-                ,pop D
-                @R13
-                A=M
-                M=D
-                ''', thisthat[segment], index)
-            elif segment in ['argument', 'local']:
+            elif segment in ['this', 'that', 'argument', 'local']:
                 asm('''
                 @{symbol}
                 ,set D [M {index}]
