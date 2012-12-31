@@ -1,0 +1,4 @@
+hlasm END
+,push A
+END
+

@@ -257,22 +257,18 @@ class CodeWriter:
             ''', address)
 
     def macro_push(self, address):
-        if address == 'A':
+        if address in ['A', 'M']:
             asm('''
-            D=A
+            D={}
             ,push D
-            ''')
-        elif address == 'M':
+            ''', address)
+        elif address in ['D', '-1', '0', '1']:
             asm('''
-            D=M
-            ,push D
-            ''')
-        elif address == 'D':
-            asm(',set *SP D')
-            asm(',++ SP')
-        elif address == '0':
-            asm(',set *SP 0')
-            asm(',++ SP')
+            @SP
+            M=M+1
+            A=M-1
+            M={}
+            ''', address)
         else:
             asm('@{}', address.lstrip('*'))
             c = address.count('*')
@@ -283,7 +279,7 @@ class CodeWriter:
             else:
                 for i in range(c - 1):
                     asm('A=M')
-                D=M
+                asm('D=M')
             asm(',push D')
 
     def macro_stamp(self, id_number):
