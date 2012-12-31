@@ -17,6 +17,12 @@ symbols = {
         'argument': 'ARG',
         }
 
+jumps = {
+        'eq': 'JEQ',
+        'lt': 'JGT',
+        'gt': 'JLT',
+        }
+
 macro_aliases = {
         '++': 'increment',
         '--': 'decrement',
@@ -191,69 +197,32 @@ class CodeWriter:
             A=M-1
             M=!M
             ''')
-        elif command == 'eq':
+        elif command in ['eq', 'lt', 'gt']:
             asm('''
-            ,pop D
-            ,-- SP
+            @SP
+            M=M-1
             A=M
+            D=M
+
+            A=A-1
             D=D-M
-            @EQ_TRUE_{0}
-            D;JEQ
+
+            @{cmd}_TRUE_{id}
+            D;{jump}
             D=0
-            @EQ_END_{0}
+            @{cmd}_END_{id}
             0;JMP
-            (EQ_TRUE_{0})
+            ({cmd}_TRUE_{id})
             D=-1
-            (EQ_END_{0})
-            ,push D
-            ''', unique_id())
-        elif command == 'gt':
-            asm('''
-            ,pop D
-            ,-- SP
-            A=M
-            D=D-M
-            @GT_TRUE_{0}
-            D;JLT
-            D=0
-            @GT_END_{0}
-            0;JMP
-            (GT_TRUE_{0})
-            D=-1
-            (GT_END_{0})
-            ,push D
-            ''', unique_id())
-        elif command == 'lt':
-            asm('''
-            #,pop D
-                @SP
-                M=M-1
-                A=M
-                D=M
+            ({cmd}_END_{id})
 
-            # -- SP
-                @SP
-                M=M-1
-
-            A=M
-            D=D-M
-            @LT_TRUE_{0}
-            D;JGT
-            D=0
-            @LT_END_{0}
-            0;JMP
-            (LT_TRUE_{0})
-            D=-1
-            (LT_END_{0})
-
-            #,push D
-                @SP
-                A=M
-                M=D
-
-                @SP
-                M=M+1
-            ''', unique_id())
+            @SP
+            A=M-1
+            M=D
+            ''',
+            cmd=command.upper(),
+            jump=jumps[command],
+            id=unique_id())
 
         else:
             asm('''

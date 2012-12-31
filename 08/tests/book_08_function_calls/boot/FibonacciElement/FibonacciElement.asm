@@ -76,9 +76,7 @@ M=M+1
 M=M-1
 A=M
 D=M
-@SP
-M=M-1
-A=M
+A=A-1
 D=D-M
 @LT_TRUE_1
 D;JGT
@@ -89,10 +87,8 @@ D=0
 D=-1
 (LT_END_1)
 @SP
-A=M
+A=M-1
 M=D
-@SP
-M=M+1
 @SP
 M=M-1
 A=M

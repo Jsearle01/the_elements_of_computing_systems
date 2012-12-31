@@ -1,0 +1,17 @@
+@SP
+M=M-1
+A=M
+D=M
+A=A-1
+D=D-M
+@LT_TRUE_0
+D;JGT
+D=0
+@LT_END_0
+0;JMP
+(LT_TRUE_0)
+D=-1
+(LT_END_0)
+@SP
+A=M-1
+M=D
