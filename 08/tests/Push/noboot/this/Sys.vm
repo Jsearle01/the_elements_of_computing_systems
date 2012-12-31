@@ -1,0 +1,9 @@
+push this 0
+hlasm END
+@12345
+END
+push this 1
+hlasm END
+@12345
+END
+push this 2
