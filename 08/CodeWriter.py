@@ -127,8 +127,7 @@ class CodeWriter:
             ,push *THAT
         # ARG=SP-n-5
             ,set ARG *SP
-            ,-= ARG {numArgs}
-            ,-= ARG 5
+            ,-= ARG {offset}
         # LCL=SP
             ,set LCL *SP
         # goto f
@@ -137,7 +136,7 @@ class CodeWriter:
             (return_{uid})
         ''',
         functionName = functionName,
-        numArgs=numArgs,
+        offset=int(numArgs) + 5,
         uid = unique_id()
         )
 

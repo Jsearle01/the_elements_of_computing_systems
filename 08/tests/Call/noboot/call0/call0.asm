@@ -32,11 +32,7 @@ M=D
 D=M
 @ARG
 M=D
-@6
-D=A
-@ARG
-M=M-D
-@5
+@11
 D=A
 @ARG
 M=M-D
