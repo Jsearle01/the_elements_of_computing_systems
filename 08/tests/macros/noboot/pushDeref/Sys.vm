@@ -1,0 +1,10 @@
+hlasm END
+,push THIS
+@12345
+,push *THIS
+@12345
+,push **THIS
+@12345
+,push ***THIS
+END
+
