@@ -191,25 +191,20 @@ class CodeWriter:
                 D=M
                 @R13
                 M=D
-                @23400
         # RET = *(FRAME-5)
             #,set {RET} *{FRAME}
             #,-= {RET} 5
             #,set {RET} **{RET}
-                @13
-                D=M
                 @14
                 M=D
                 @5
                 D=A
                 @14
                 M=M-D
-                @14
                 A=M
                 D=M
                 @14
                 M=D
-                @23401
         # *ARG = pop()
             #,pop D
             #,set *ARG D
@@ -228,7 +223,6 @@ class CodeWriter:
                 D=M
                 @SP
                 M=D
-                @SP
                 M=M+1
                 @23403
         # THAT = *(FRAME-1)
@@ -239,9 +233,7 @@ class CodeWriter:
                 D=M
                 @THAT
                 M=D
-                @THAT
                 M=M-1
-                @THAT
                 A=M
                 D=M
                 @THAT
@@ -259,7 +251,6 @@ class CodeWriter:
                 D=A
                 @THIS
                 M=M-D
-                @THIS
                 A=M
                 D=M
                 @THIS
@@ -277,7 +268,6 @@ class CodeWriter:
                 D=A
                 @ARG
                 M=M-D
-                @ARG
                 A=M
                 D=M
                 @ARG
@@ -295,7 +285,6 @@ class CodeWriter:
                 D=A
                 @LCL
                 M=M-D
-                @LCL
                 A=M
                 D=M
                 @LCL
