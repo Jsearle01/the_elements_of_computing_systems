@@ -507,16 +507,30 @@ class CodeWriter:
                 D=M
                 ,push D
                 ''')
-            else:
+            elif segment in ['argument', 'local']:
+                if index == '0':
+                    address = 'A=M'
+                elif index == '1':
+                    address = 'A=M+1'
+                else:
+                    address = '''
+                    D=M
+                    ,+= D {}
+                    A=D
+                    '''.format(index)
                 asm('''
-                ,set D *{symbol}
-                ,+= D {index}
+                @{symbol}
 
-                A=D
+                {address_code}
+
                 D=M
-
                 ,push D
-                ''', symbol=symbols[segment], index=index)
+                ''',
+                symbol=symbols[segment],
+                address_code = address)
+            else:
+                raise SyntaxError('unknown push sub command')
+
         elif command == 'C_POP':
             asm(',stamp 9')
             if segment == 'temp':

@@ -49,8 +49,7 @@ M=D
 (return_0)
 (Main.fibonacci)
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -89,8 +88,7 @@ D;JNE
 0;JMP
 (Main.fibonacci$IF_TRUE)
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -181,8 +179,7 @@ A=M
 0;JMP
 (Main.fibonacci$IF_FALSE)
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -248,8 +245,7 @@ M=D
 0;JMP
 (return_2)
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1

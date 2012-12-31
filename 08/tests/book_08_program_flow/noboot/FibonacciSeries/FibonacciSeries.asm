@@ -1,7 +1,5 @@
 @ARG
-D=M
-D=D+1
-A=D
+A=M+1
 D=M
 @SP
 M=M+1
@@ -45,8 +43,7 @@ D=M
 A=M
 M=D
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -77,8 +74,7 @@ A=M
 M=D
 ($MAIN_LOOP_START)
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -101,9 +97,7 @@ M=M+1
 A=M-1
 M=D
 @THAT
-D=M
-@1
-A=D+A
+A=M+1
 D=M
 @SP
 M=M+1
@@ -151,8 +145,7 @@ D=M
 @THAT
 M=D
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1

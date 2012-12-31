@@ -1,6 +1,5 @@
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -8,9 +7,7 @@ A=M-1
 M=D
 @12345
 @ARG
-D=M
-D=D+1
-A=D
+A=M+1
 D=M
 @SP
 M=M+1

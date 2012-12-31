@@ -49,8 +49,7 @@ M=D
 (return_0)
 (Class1.set)
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -63,9 +62,7 @@ D=M
 @Class1.0
 M=D
 @ARG
-D=M
-D=D+1
-A=D
+A=M+1
 D=M
 @SP
 M=M+1
@@ -268,8 +265,7 @@ A=M
 0;JMP
 (Class2.set)
 @ARG
-D=M
-A=D
+A=M
 D=M
 @SP
 M=M+1
@@ -282,9 +278,7 @@ D=M
 @Class2.0
 M=D
 @ARG
-D=M
-D=D+1
-A=D
+A=M+1
 D=M
 @SP
 M=M+1
