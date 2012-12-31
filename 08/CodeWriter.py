@@ -522,7 +522,7 @@ class CodeWriter:
                 ,pop D
                 @{}
                 M=D
-                ''', symbols[segment])
+                ''', symbols[(segment, index)])
             elif segment in ['this', 'that', 'argument', 'local']:
                 asm('''
                 @{symbol}
@@ -531,7 +531,7 @@ class CodeWriter:
                 ,pop D
                 ,set *{temp} D
                 ''',
-                temp='temp',
+                temp='R13',
                 symbol=symbols[segment],
                 index=index)
             else:
