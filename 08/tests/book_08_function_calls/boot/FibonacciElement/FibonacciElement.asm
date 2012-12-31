@@ -50,10 +50,7 @@ M=D
 (Main.fibonacci)
 @ARG
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -93,10 +90,7 @@ D;JNE
 (Main.fibonacci$IF_TRUE)
 @ARG
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -188,10 +182,7 @@ A=M
 (Main.fibonacci$IF_FALSE)
 @ARG
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -258,10 +249,7 @@ M=D
 (return_2)
 @ARG
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1

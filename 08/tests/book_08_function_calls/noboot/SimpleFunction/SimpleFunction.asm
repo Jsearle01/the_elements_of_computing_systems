@@ -9,10 +9,7 @@ A=M-1
 M=0
 @LCL
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -21,10 +18,7 @@ M=D
 @LCL
 D=M
 D=D+1
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -41,10 +35,7 @@ A=M-1
 M=!M
 @ARG
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -59,10 +50,7 @@ M=M+D
 @ARG
 D=M
 D=D+1
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1

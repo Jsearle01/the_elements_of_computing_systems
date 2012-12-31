@@ -50,10 +50,7 @@ M=D
 (Class1.set)
 @ARG
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -68,10 +65,7 @@ M=D
 @ARG
 D=M
 D=D+1
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -275,10 +269,7 @@ A=M
 (Class2.set)
 @ARG
 D=M
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1
@@ -293,10 +284,7 @@ M=D
 @ARG
 D=M
 D=D+1
-@R13
-M=D
-@R13
-A=M
+A=D
 D=M
 @SP
 M=M+1

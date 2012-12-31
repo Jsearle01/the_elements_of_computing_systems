@@ -507,8 +507,10 @@ class CodeWriter:
                 asm('''
                 ,set D *{symbol}
                 ,+= D {index}
-                ,set R13 D
-                ,set D **R13
+
+                A=D
+                D=M
+
                 ,push D
                 ''', symbol=symbols[segment], index=index)
         elif command == 'C_POP':
