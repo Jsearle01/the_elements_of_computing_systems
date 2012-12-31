@@ -514,16 +514,11 @@ class CodeWriter:
             asm(',stamp 9')
             if segment == 'temp':
                 asm('''
-                @R5
-                D=A
-                ,+= D {0}
-                @R13
-                M=D
                 ,pop D
-                @R13
+                @{}
                 A=M
                 M=D
-                ''', index)
+                ''', symbols[(segment, index)])
             elif segment == 'static':
                 asm('''
                 ,pop D
