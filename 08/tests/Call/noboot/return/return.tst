@@ -20,7 +20,7 @@ set RAM[256] 200,
 set RAM[257] 101,
 set RAM[258] 102,
 set RAM[259] 103,
-set RAM[260] 104,
+set RAM[260] 69,
 
 repeat 100 {
   ticktock;
