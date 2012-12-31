@@ -213,6 +213,31 @@ class CodeWriter:
             jump=jumps[command],
             id=unique_id())
 
+        elif command == 'add':
+            asm('''
+            @SP
+            M=M-1
+            A=M
+            D=M
+
+            A=A-1
+            M=D+M
+            ''')
+            #asm('''
+            #@SP
+            #M=M-1
+            #A=M
+            #D=M
+            #@SP
+            #M=M-1
+            #A=M
+            #D=D+M
+            #@SP
+            #A=M
+            #M=D
+            #@SP
+            #M=M+1
+            #''')
         else:
             asm('''
             ,pop D

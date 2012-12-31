@@ -1,4 +1,6 @@
 #! /usr/bin/env sh
 
-cp $1/*.out $1/*.cmp
+if [[ -d $1 ]]; then
+    cp $1/*.out $1/*.cmp
+fi
 

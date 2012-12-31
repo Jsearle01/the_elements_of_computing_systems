@@ -43,15 +43,8 @@ M=M+1
 M=M-1
 A=M
 D=M
-@SP
-M=M-1
-A=M
-D=D+M
-@SP
-A=M
-M=D
-@SP
-M=M+1
+A=A-1
+M=D+M
 @LCL
 D=M
 @R13
