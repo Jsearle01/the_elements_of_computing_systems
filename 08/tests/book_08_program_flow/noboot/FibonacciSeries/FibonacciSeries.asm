@@ -17,11 +17,9 @@ A=M
 D=M
 @THAT
 M=D
-@0
-D=A
 @SP
 A=M
-M=D
+M=0
 @SP
 M=M+1
 @THAT

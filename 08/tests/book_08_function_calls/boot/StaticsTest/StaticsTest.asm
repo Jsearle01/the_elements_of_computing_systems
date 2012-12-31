@@ -90,11 +90,9 @@ A=M
 D=M
 @Class1.1
 M=D
-@0
-D=A
 @SP
 A=M
-M=D
+M=0
 @SP
 M=M+1
 @LCL
@@ -330,11 +328,9 @@ A=M
 D=M
 @Class2.1
 M=D
-@0
-D=A
 @SP
 A=M
-M=D
+M=0
 @SP
 M=M+1
 @LCL

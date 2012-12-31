@@ -282,6 +282,9 @@ class CodeWriter:
         elif address == 'D':
             asm(',set *SP D')
             asm(',++ SP')
+        elif address == '0':
+            asm(',set *SP 0')
+            asm(',++ SP')
         else:
             asm('@{}', address.lstrip('*'))
             c = address.count('*')
@@ -328,6 +331,8 @@ class CodeWriter:
             A=M
             D=M
             ''')
+        elif source in ['-1', '0', '1']:
+            pass
         else:
             asm('@{}', source.lstrip('*'))
             try:
@@ -339,37 +344,44 @@ class CodeWriter:
             if source[0] == '*': asm('D=M')
             else:                asm('D=A')
 
+
+        if source in ['-1', '0', '1']:
+            rhs = source
+        else:
+            rhs = 'D'
+
+
         if dest == 'D':
             pass
         elif dest == '*D':
             asm('''
             A=D
             A=M
-            M=D
-            ''')
+            M={}
+            ''', rhs)
         elif dest == 'A':
             asm('''
-            A=D
-            ''')
+            A={}
+            ''', rhs)
         elif dest == '*A':
             asm('''
-            M=D
-            ''')
+            M={}
+            ''', rhs)
         elif dest == 'M':
             asm('''
-            M=D
-            ''')
+            M={}
+            ''', rhs)
         elif dest == '*M':
             asm('''
             A=M
-            M=D
-            ''')
+            M={}
+            ''', rhs)
         else:
             asm('@{}', dest.lstrip('*'))
             while dest[0] == '*':
                 asm('A=M')
                 dest = dest[1:]
-            asm('M=D')
+            asm('M={}', rhs)
 
     def macro_goto(self, address):
         asm('@{}', address.lstrip('*'))
