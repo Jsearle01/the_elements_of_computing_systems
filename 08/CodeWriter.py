@@ -3,13 +3,6 @@ from itertools import count
 import os.path
 import re
 
-thisthat = {
-        '0': 'THIS',
-        '1': 'THAT',
-        'this': 'THIS',
-        'that': 'THAT',
-        }
-
 symbols = {
         'this': 'THIS',
         'that': 'THAT',
@@ -529,7 +522,7 @@ class CodeWriter:
                 ,pop D
                 @{}
                 M=D
-                ''', thisthat[index])
+                ''', symbols[segment])
             elif segment in ['this', 'that', 'argument', 'local']:
                 asm('''
                 @{symbol}
