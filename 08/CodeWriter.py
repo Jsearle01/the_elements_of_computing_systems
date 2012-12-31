@@ -170,16 +170,26 @@ class CodeWriter:
     def writeArithmetic(self, command):
         asm(',stamp 7')
         if command == 'neg':
+            #asm('''
+            #,pop D
+            #D=-D
+            #,push D
+            #''')
             asm('''
-            ,pop D
-            D=-D
-            ,push D
+            @SP
+            A=M-1
+            D=-M
             ''')
         elif command == 'not':
+            #asm('''
+            #,pop D
+            #D=!D
+            #,push D
+            #''')
             asm('''
-            ,pop D
-            D=!D
-            ,push D
+            @SP
+            A=M-1
+            M=!M
             ''')
         elif command == 'eq':
             asm('''
