@@ -299,25 +299,18 @@ class CodeWriter:
             @{1}
             ''', 12345, 12300 + int(id_number))
 
-    def macro_set(self, dest, source):
-        # set D to source
-        if source == 'D':
-            pass
+    def macro_set(self, dest, source, offset=None):
+        single_instruction = False
+
+        if source in ['A', 'M', 'D', '-1', '0', '1']:
+            single_instruction = True
+            rhs = source
+        elif source == '*A':
+            single_instruction = True
+            rhs = 'M'
         elif source == '*D':
             asm('''
             A=D
-            D=M
-            ''')
-        elif source == 'A':
-            asm('''
-            D=A
-            ''')
-        elif source == '*A':
-            asm('''
-            D=M
-            ''')
-        elif source == 'M':
-            asm('''
             D=M
             ''')
         elif source == '*M':
@@ -325,8 +318,20 @@ class CodeWriter:
             A=M
             D=M
             ''')
-        elif source in ['-1', '0', '1']:
-            pass
+        elif source[:2] == '[M':
+            offset = offset[:-1]
+            if offset == '0':
+                single_instruction = True
+                rhs = 'M'
+            elif offset == '1':
+                single_instruction = True
+                rhs = 'M+1'
+            else:
+                asm('''
+                D=M
+                @{}
+                D=D+A
+                ''', offset)
         else:
             asm('@{}', source.lstrip('*'))
             try:
@@ -339,9 +344,7 @@ class CodeWriter:
             else:                asm('D=A')
 
 
-        if source in ['-1', '0', '1']:
-            rhs = source
-        else:
+        if single_instruction == False:
             rhs = 'D'
 
 
@@ -476,58 +479,31 @@ class CodeWriter:
             asm(',stamp 8')
             if segment == 'constant':
                 asm(',push {0}', index)
+
             elif segment == 'static':
                 asm('''
                 @{0}.{1}
                 D=M
                 ,push D
                 ''', self.filename, index)
+
             elif segment in ['temp', 'pointer']:
                 asm('''
                 @{}
                 D=M
                 ,push D
                 ''', symbols[(segment, index)])
-            elif segment in ['this', 'that']:
-                asm('@{}', segment.upper())
 
-                if index == '0':
-                    asm('A=M')
-                elif index == '1':
-                    asm('A=M+1')
-                else:
-                    asm('''
-                    D=M
-                    @{}
-                    A=D+A
-                    ''', index)
-                    pass
-
+            elif segment in ['this', 'that', 'argument', 'local']:
                 asm('''
-                D=M
-                ,push D
-                ''')
-            elif segment in ['argument', 'local']:
-                if index == '0':
-                    address = 'A=M'
-                elif index == '1':
-                    address = 'A=M+1'
-                else:
-                    address = '''
-                    D=M
-                    ,+= D {}
-                    A=D
-                    '''.format(index)
-                asm('''
-                @{symbol}
-
-                {address_code}
-
+                @{}
+                ,set A [M {}]
                 D=M
                 ,push D
                 ''',
-                symbol=symbols[segment],
-                address_code = address)
+                symbols[segment],
+                index)
+
             else:
                 raise SyntaxError('unknown push sub command')
 
