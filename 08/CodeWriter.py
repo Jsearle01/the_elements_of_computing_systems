@@ -349,7 +349,10 @@ class CodeWriter:
 
 
         if dest == 'D':
-            pass
+            if rhs == 'D':
+                pass
+            else:
+                asm('D={}', rhs)
         elif dest == '*D':
             asm('''
             A=D
@@ -545,14 +548,19 @@ class CodeWriter:
                 A=M
                 M=D
                 ''', thisthat[segment], index)
-            else:
+            elif segment in ['argument', 'local']:
                 asm('''
-                ,set D *{symbol}
-                ,+= D {index}
-                ,set R13 D
+                @{symbol}
+                ,set D [M {index}]
+                ,set {temp} D
                 ,pop D
-                ,set *R13 D
-                ''', symbol=symbols[segment], index=index)
+                ,set *{temp} D
+                ''',
+                temp='temp',
+                symbol=symbols[segment],
+                index=index)
+            else:
+                raise SyntaxError('unknown pop sub command')
         else:
             raise SyntaxError('unknown pushPop: %s ; %s ; %s' % (command, segment, index))
 
