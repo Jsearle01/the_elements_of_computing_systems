@@ -15,6 +15,16 @@ symbols = {
         'that': 'THAT',
         'local'   : 'LCL',
         'argument': 'ARG',
+        ('temp', '0') : 'R5',
+        ('temp', '1') : 'R6',
+        ('temp', '2') : 'R7',
+        ('temp', '3') : 'R8',
+        ('temp', '4') : 'R9',
+        ('temp', '5') : 'R10',
+        ('temp', '6') : 'R11',
+        ('temp', '7') : 'R12',
+        ('pointer', '0') : 'THIS',
+        ('pointer', '1') : 'THAT',
         }
 
 jumps = {
@@ -472,20 +482,12 @@ class CodeWriter:
                 D=M
                 ,push D
                 ''', self.filename, index)
-            elif segment == 'temp':
-                # push temp index -> onto the stack
-                asm('''
-                @R5
-                ,+= A {0}
-                D=M
-                ,push D
-                ''', index)
-            elif segment == 'pointer':
+            elif segment in ['temp', 'pointer']:
                 asm('''
                 @{}
                 D=M
                 ,push D
-                ''', thisthat[index])
+                ''', symbols[(segment, index)])
             elif segment == 'this' or segment == 'that':
                 asm('@{}', segment.upper())
 
