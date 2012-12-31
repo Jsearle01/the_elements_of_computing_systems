@@ -7,9 +7,7 @@ A=M-1
 M=D
 @12345
 @THIS
-D=M
-@1
-A=D+A
+A=M+1
 D=M
 @SP
 M=M+1

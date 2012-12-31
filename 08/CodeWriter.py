@@ -488,11 +488,13 @@ class CodeWriter:
                 D=M
                 ,push D
                 ''', symbols[(segment, index)])
-            elif segment == 'this' or segment == 'that':
+            elif segment in ['this', 'that']:
                 asm('@{}', segment.upper())
 
                 if index == '0':
                     asm('A=M')
+                elif index == '1':
+                    asm('A=M+1')
                 else:
                     asm('''
                     D=M
