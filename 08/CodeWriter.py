@@ -30,6 +30,11 @@ macro_aliases = {
         '-=': 'decrement_by',
         }
 
+modifiers = {
+        'neg' : '-',
+        'not' : '!',
+        }
+
 class CodeWriter:
     def __init__(self, output_file, stamp=False):
         self.file = output_file
@@ -175,28 +180,12 @@ class CodeWriter:
 
     def writeArithmetic(self, command):
         asm(',stamp 7')
-        if command == 'neg':
-            #asm('''
-            #,pop D
-            #D=-D
-            #,push D
-            #''')
+        if command in ['neg', 'not']:
             asm('''
             @SP
             A=M-1
-            M=-M
-            ''')
-        elif command == 'not':
-            #asm('''
-            #,pop D
-            #D=!D
-            #,push D
-            #''')
-            asm('''
-            @SP
-            A=M-1
-            M=!M
-            ''')
+            M={}M
+            ''', modifiers[command])
         elif command in ['eq', 'lt', 'gt']:
             asm('''
             @SP
