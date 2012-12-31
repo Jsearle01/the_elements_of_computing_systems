@@ -1,0 +1,9 @@
+push argument 0
+hlasm END
+@12345
+END
+push argument 1
+hlasm END
+@12345
+END
+push argument 2
