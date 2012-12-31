@@ -225,8 +225,16 @@ class CodeWriter:
             ''', unique_id())
         elif command == 'lt':
             asm('''
-            ,pop D
-            ,-- SP
+            #,pop D
+                @SP
+                M=M-1
+                A=M
+                D=M
+
+            # -- SP
+                @SP
+                M=M-1
+
             A=M
             D=D-M
             @LT_TRUE_{0}
@@ -237,7 +245,14 @@ class CodeWriter:
             (LT_TRUE_{0})
             D=-1
             (LT_END_{0})
-            ,push D
+
+            #,push D
+                @SP
+                A=M
+                M=D
+
+                @SP
+                M=M+1
             ''', unique_id())
 
         else:
