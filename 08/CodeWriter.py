@@ -30,9 +30,13 @@ macro_aliases = {
         '-=': 'decrement_by',
         }
 
-modifiers = {
+operators = {
         'neg' : '-',
         'not' : '!',
+        'add' : '+',
+        'sub' : '-',
+        'and' : '&',
+        'or' : '|',
         }
 
 class CodeWriter:
@@ -181,12 +185,14 @@ class CodeWriter:
     def writeArithmetic(self, command):
         asm(',stamp 7')
         if command in ['neg', 'not']:
+            # uses one argument
             asm('''
             @SP
             A=M-1
             M={}M
-            ''', modifiers[command])
+            ''', operators[command])
         elif command in ['eq', 'lt', 'gt']:
+            # uses two arguments
             asm('''
             @SP
             M=M-1
@@ -213,45 +219,19 @@ class CodeWriter:
             jump=jumps[command],
             id=unique_id())
 
-        elif command == 'add':
+        else:
+            # uses two arguments
             asm('''
             @SP
             M=M-1
             A=M
             D=M
-
             A=A-1
-            M=D+M
-            ''')
-            #asm('''
-            #@SP
-            #M=M-1
-            #A=M
-            #D=M
-            #@SP
-            #M=M-1
-            #A=M
-            #D=D+M
-            #@SP
-            #A=M
-            #M=D
-            #@SP
-            #M=M+1
-            #''')
-        else:
-            asm('''
-            ,pop D
-            ,-- SP
-            A=M
-            ''')
 
-            if   command == 'add': asm('D=D+M')
-            elif command == 'sub': asm('D=-D\nD=D+M')
-            elif command == 'and': asm('D=D&M')   # D &= *SP
-            elif command == 'or' : asm('D=D|M')   # D |= *SP
-            else: raise SyntaxError('unknown arithmetic command')
-
-            asm(',push D')
+            M=M{operator}D
+            ''',
+            operator = operators[command]
+            )
 
     def writeBreakpoint(self, breakpoint_id):
         asm('''

@@ -44,7 +44,7 @@ M=M-1
 A=M
 D=M
 A=A-1
-M=D+M
+M=M+D
 @LCL
 D=M
 @R13
@@ -79,16 +79,8 @@ M=M+1
 M=M-1
 A=M
 D=M
-@SP
-M=M-1
-A=M
-D=-D
-D=D+M
-@SP
-A=M
-M=D
-@SP
-M=M+1
+A=A-1
+M=M-D
 @ARG
 D=M
 @R13
