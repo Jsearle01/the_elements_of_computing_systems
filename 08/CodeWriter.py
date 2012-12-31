@@ -516,7 +516,7 @@ class CodeWriter:
                 asm('''
                 ,pop D
                 @{}
-                A=M
+                #A=M
                 M=D
                 ''', symbols[(segment, index)])
             elif segment == 'static':
