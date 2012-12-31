@@ -184,7 +184,7 @@ class CodeWriter:
             asm('''
             @SP
             A=M-1
-            D=-M
+            M=-M
             ''')
         elif command == 'not':
             #asm('''
