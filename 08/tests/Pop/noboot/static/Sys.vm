@@ -1,0 +1,10 @@
+pop static 0
+hlasm END
+@12345
+END
+pop static 1
+hlasm END
+@12345
+END
+pop static 2
+
