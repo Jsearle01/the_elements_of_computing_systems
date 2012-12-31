@@ -150,38 +150,163 @@ class CodeWriter:
             asm(',push 0')
 
     def writeReturn(self):
+        #asm('''
+        #,stamp 6
+        ## FRAME = LCL
+            #,set {FRAME} *LCL
+        ## RET = *(FRAME-5)
+            #,set {RET} *{FRAME}
+            #,-= {RET} 5
+            #,set {RET} **{RET}
+        ## *ARG = pop()
+            #,pop D
+            #,set *ARG D
+        ## SP = ARG+1
+            #,set SP *ARG
+            #,++ SP
+        ## THAT = *(FRAME-1)
+            #,set THAT *{FRAME}
+            #,-= THAT 1
+            #,set THAT **THAT
+        ## THIS = *(FRAME-2)
+            #,set THIS *{FRAME}
+            #,-= THIS 2
+            #,set THIS **THIS
+        ## ARG  = *(FRAME-3)
+            #,set ARG *{FRAME}
+            #,-= ARG 3
+            #,set ARG **ARG
+        ## LCL  = *(FRAME-4)
+            #,set LCL *{FRAME}
+            #,-= LCL 4
+            #,set LCL **LCL
+        ## goto RET
+            #,goto *{RET}
+        #''', FRAME='R13', RET='R14')
         asm('''
         ,stamp 6
         # FRAME = LCL
-            ,set {FRAME} *LCL
+            #,set {FRAME} *LCL
+                @LCL
+                D=M
+                @R13
+                M=D
+                @23400
         # RET = *(FRAME-5)
-            ,set {RET} *{FRAME}
-            ,-= {RET} 5
-            ,set {RET} **{RET}
+            #,set {RET} *{FRAME}
+            #,-= {RET} 5
+            #,set {RET} **{RET}
+                @13
+                D=M
+                @14
+                M=D
+                @5
+                D=A
+                @14
+                M=M-D
+                @14
+                A=M
+                D=M
+                @14
+                M=D
+                @23401
         # *ARG = pop()
-            ,pop D
-            ,set *ARG D
+            #,pop D
+            #,set *ARG D
+                @SP
+                M=M-1
+                A=M
+                D=M
+                @ARG
+                A=M
+                M=D
+                @23402
         # SP = ARG+1
-            ,set SP *ARG
-            ,++ SP
+            #,set SP *ARG
+            #,++ SP
+                @ARG
+                D=M
+                @SP
+                M=D
+                @SP
+                M=M+1
+                @23403
         # THAT = *(FRAME-1)
-            ,set THAT *{FRAME}
-            ,-= THAT 1
-            ,set THAT **THAT
+            #,set THAT *{FRAME}
+            #,-= THAT 1
+            #,set THAT **THAT
+                @R13
+                D=M
+                @THAT
+                M=D
+                @THAT
+                M=M-1
+                @THAT
+                A=M
+                D=M
+                @THAT
+                M=D
+                @23404
         # THIS = *(FRAME-2)
-            ,set THIS *{FRAME}
-            ,-= THIS 2
-            ,set THIS **THIS
+            #,set THIS *{FRAME}
+            #,-= THIS 2
+            #,set THIS **THIS
+                @R13
+                D=M
+                @THIS
+                M=D
+                @2
+                D=A
+                @THIS
+                M=M-D
+                @THIS
+                A=M
+                D=M
+                @THIS
+                M=D
+                @23405
         # ARG  = *(FRAME-3)
-            ,set ARG *{FRAME}
-            ,-= ARG 3
-            ,set ARG **ARG
+            #,set ARG *{FRAME}
+            #,-= ARG 3
+            #,set ARG **ARG
+                @R13
+                D=M
+                @ARG
+                M=D
+                @3
+                D=A
+                @ARG
+                M=M-D
+                @ARG
+                A=M
+                D=M
+                @ARG
+                M=D
+                @23406
         # LCL  = *(FRAME-4)
-            ,set LCL *{FRAME}
-            ,-= LCL 4
-            ,set LCL **LCL
+            #,set LCL *{FRAME}
+            #,-= LCL 4
+            #,set LCL **LCL
+                @R13
+                D=M
+                @LCL
+                M=D
+                @4
+                D=A
+                @LCL
+                M=M-D
+                @LCL
+                A=M
+                D=M
+                @LCL
+                M=D
+                @23407
         # goto RET
-            ,goto *{RET}
+            #,goto *{RET}
+                @R14
+                A=M
+                0;JMP
+                @23408
         ''', FRAME='R13', RET='R14')
 
     def writeArithmetic(self, command):

@@ -36,12 +36,10 @@ M=D
 D=M
 @ARG
 M=D
-@12345
 @5
 D=A
 @ARG
 M=M-D
-@12345
 @SP
 D=M
 @LCL
