@@ -1,0 +1,4 @@
+push constant 32767
+push constant 0
+push constant 1
+push constant 666

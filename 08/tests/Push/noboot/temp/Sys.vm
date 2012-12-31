@@ -1,0 +1,9 @@
+push temp 0
+hlasm END
+@12345
+END
+push temp 1
+hlasm END
+@12345
+END
+push temp 2
