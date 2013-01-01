@@ -446,13 +446,10 @@ class CodeWriter:
             ''', 12345, 12300 + int(id_number))
 
     def macro_set(self, dest, source, offset=None):
-        single_instruction = False
-
+        rhs = 'D'
         if source in ['A', 'M', 'D', '-1', '0', '1']:
-            single_instruction = True
             rhs = source
         elif source == '*A':
-            single_instruction = True
             rhs = 'M'
         elif source == '*D':
             asm('''
@@ -467,17 +464,22 @@ class CodeWriter:
         elif source[:2] == '[M':
             offset = offset[:-1]
             if offset == '0':
-                single_instruction = True
                 rhs = 'M'
             elif offset == '1':
-                single_instruction = True
                 rhs = 'M+1'
             else:
-                asm('''
-                D=M
-                @{}
-                D=D+A
-                ''', offset)
+                if dest == 'A':
+                    asm('''
+                    D=M
+                    @{}
+                    ''', offset)
+                    rhs='D+A'
+                else:
+                    asm('''
+                    D=M
+                    @{}
+                    D=D+A
+                    ''', offset)
         else:
             asm('@{}', source.lstrip('*'))
             try:
@@ -488,10 +490,6 @@ class CodeWriter:
                 pass
             if source[0] == '*': asm('D=M')
             else:                asm('D=A')
-
-
-        if single_instruction == False:
-            rhs = 'D'
 
 
         if dest == 'D':

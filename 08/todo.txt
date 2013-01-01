@@ -1,7 +1,0 @@
-optimize code generation
-
-@x
-D=M
-@x
-M=D
-
