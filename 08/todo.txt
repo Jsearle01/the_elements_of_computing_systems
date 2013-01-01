@@ -1,7 +1,12 @@
+1.
 impliment call & return as static functions that occur at the top of the
 file once with the init code.
 
 Push return var.
 Jump to them.
 Jump back.
+
+
+2.
+add infinate loop after sys.init return, in init code
 
