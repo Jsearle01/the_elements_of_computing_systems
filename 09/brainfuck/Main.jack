@@ -1,0 +1,47 @@
+class Main {
+    function void main() {
+        var char c;
+        var char KEY_Q;
+        var int linesPrinted;
+        var boolean running;
+        var String line, prompt;
+        var Brainfuck vm;
+
+        let KEY_Q = 81;
+
+        let vm = Brainfuck.new(100);
+        let prompt = "> ";
+        let running = true;
+        let linesPrinted = 3;
+
+        do Output.printString("brainfuck REPL");
+        do Output.println();
+
+        while (running) {
+            let line = Keyboard.readLine(prompt);
+
+            if (linesPrinted > 22) {
+                do Screen.clearScreen();
+                do Output.moveCursor(0, 0);
+                do Output.printString(prompt);
+                do Output.printString(line);
+                do Output.println();
+                let linesPrinted = 2;
+            }
+
+            let c = line.charAt(0);
+
+            if ((c = KEY_Q) & (line.length() = 1)) {
+                let running = false;
+                do Output.printString("Bye Bye");
+                do Output.println();
+            } else {
+                do vm.eval(line);
+                let linesPrinted = linesPrinted + 2;
+            }
+        }
+
+        return;
+    }
+}
+

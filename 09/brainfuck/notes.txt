@@ -1,0 +1,30 @@
+char array[30000]
+char *ptr = array
+
+>
+++ptr
+
+<
+--ptr
+
++
+++*ptr
+
+-
+--*ptr
+
+.
+putchar(*ptr)
+
+'
+*ptr=getchar()
+
+[
+while(*ptr) {
+
+]
+}
+
+
+both [, ] jump to pair if *p == 0
+

@@ -1,0 +1,3 @@
+all: Main.jack
+	jackc .
+

@@ -1,0 +1,31 @@
+class Brainfuck {
+    field Array array;
+    field int offset;
+
+    constructor Brainfuck new(int length) {
+        let array = Array.new(length);
+        let offset = 0;
+        return this;
+    }
+
+    method void eval(String input) {
+        var int length;
+        var int i;
+        var char c;
+
+        let length = input.length();
+        while (i < length) {
+            let c = input.charAt(i);
+            do Brainfuck.evalChar(this, c);
+            let i = i + 1;
+        }
+        do Output.println();
+        return;
+    }
+
+    function void evalChar(Brainfuck self, char c) {
+        do Output.printChar(c);
+        return;
+    }
+}
+
