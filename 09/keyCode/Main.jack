@@ -1,0 +1,46 @@
+class Main {
+    function void main() {
+        var char c;
+        var char KEY_ESC;
+        var int linesPrinted;
+        var boolean running;
+        var String line, prompt;
+
+        let KEY_ESC = 140;
+
+        let prompt = "> ";
+        let running = true;
+        let linesPrinted = 3;
+
+        do Output.printString("keyCode app");
+        do Output.println();
+
+        while (running) {
+            let c = Keyboard.readChar();
+            do Output.println();
+
+            if (linesPrinted > 22) {
+                do Screen.clearScreen();
+                do Output.moveCursor(0, 0);
+                do Output.printChar(c);
+                do Output.println();
+                let linesPrinted = 2;
+            }
+
+
+            if ((c = KEY_ESC)) {
+                let running = false;
+                do Output.printString("ESC: Bye Bye");
+                do Output.println();
+            } else {
+                do Output.printInt(c);
+                do Output.println();
+
+                let linesPrinted = linesPrinted + 2;
+            }
+        }
+
+        return;
+    }
+}
+
