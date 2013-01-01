@@ -1,0 +1,35 @@
+class Stack {
+    field Array stack;
+    field int offset;
+    field int maxSize;
+
+    constructor Stack new(int size) {
+        let maxSize = size;
+        let stack = Array.new(size);
+        return this;
+    }
+
+    method void push(int newItem) {
+        let stack[offset] = newItem;
+        let offset = offset + 1;
+        return;
+    }
+
+    method int pop() {
+        let offset = offset - 1;
+        return stack[offset];
+    }
+
+    method int top() {
+        return stack[offset - 1];
+    }
+
+    method boolean empty() {
+        if (offset = 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+

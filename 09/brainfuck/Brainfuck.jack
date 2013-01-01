@@ -11,8 +11,13 @@ class Brainfuck {
 
     field Array array;
     field int arrayLength;
-    field String line;
     field int pointer;
+
+    field String line;
+    field int lineOffset;
+    field int lineLength;
+
+    field Stack loops;
 
     function void init() {
         let K_PLUS                 = 43;
@@ -28,6 +33,7 @@ class Brainfuck {
     }
 
     constructor Brainfuck new(int length) {
+        let loops = Stack.new(15);
         let pointer = 0;
         let array = Array.new(length);
         let arrayLength = length;
@@ -35,24 +41,36 @@ class Brainfuck {
     }
 
     method void reset() {
-        do Memory.deAlloc(array);
-        let array = Array.new(arrayLength);
+        var int i;
+
+        // Zero array
+        while (i < arrayLength) {
+            let array[i] = 0;
+            let i = i + 1;
+        }
+
+        let pointer = 0;
+
         return;
     }
 
     method void eval(String input) {
+        var Brainfuck self;
         var int length;
-        var int i;
         var char c;
 
-
+        let self = this;
         let line = input;
-        let length = input.length();
-        while (i < length) {
-            let c = input.charAt(i);
+        let lineOffset = 0;
+        let lineLength = input.length();
+
+        while (lineOffset < lineLength) {
+            // do self.debug();
+            let c = input.charAt(lineOffset);
             do Brainfuck.evalChar(this, c);
-            let i = i + 1;
+            let lineOffset = lineOffset + 1;
         }
+        // do self.debug();
         do Output.println();
 
         return;
@@ -129,14 +147,69 @@ class Brainfuck {
     }
 
     method void actionLeftBracket() {
-        do Output.printString("{[}");
+        var int i;
+        var Brainfuck b;
+
+        let i = array[pointer];
+        let b = this;
+
+        if (i = 0) {
+            do b.jumpForward();
+        } else {
+            do loops.push(lineOffset);
+        }
         return;
     }
 
     method void actionRightBracket() {
-        do Output.printString("{]}");
+        var int i;
+
+        let i = array[pointer];
+
+        if (i = 0) {
+            do loops.pop();
+        } else {
+            let lineOffset = loops.top();
+        }
         return;
     }
 
+    method void jumpForward() {
+        var boolean pairNotFound;
+        var char c;
+        var int loopsFound;
+
+        let pairNotFound = true;
+
+        while (pairNotFound) {
+            let c = line.charAt(lineOffset);
+
+            if (c = K_LEFT_SQUARE_BRACKET) {
+                let loopsFound = loopsFound + 1;
+            }
+
+            if (c = K_RIGTH_SQUARE_BRACKET) {
+                let loopsFound = loopsFound - 1;
+            }
+
+            if (loopsFound = 0) {
+                let pairNotFound = false;
+            }
+
+            let lineOffset = lineOffset + 1;
+        }
+        return;
+    }
+
+    method void debug () {
+        do Output.println();
+        do Output.printInt(pointer);
+        do Output.printString(", ");
+        do Output.printInt(array[pointer]);
+        do Output.printString(", ");
+        do Output.printInt(lineOffset);
+        do Output.println();
+        return;
+    }
 }
 

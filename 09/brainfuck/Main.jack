@@ -1,7 +1,7 @@
 class Main {
     function void main() {
+        var char K_Q;
         var char c;
-        var char K_ESC;
         var int linesPrinted;
         var boolean running;
         var String line, prompt;
@@ -9,15 +9,18 @@ class Main {
 
         do Brainfuck.init();
 
-        let K_ESC = 140;
+        let K_Q = 81;
 
-        let vm = Brainfuck.new(100);
         let prompt = "> ";
         let running = true;
         let linesPrinted = 3;
 
+        let vm = Brainfuck.new(100);
+
         do Output.printString("brainfuck REPL");
         do Output.println();
+        // do Output.printString("p, *p, i");
+        // do Output.println();
 
         while (running) {
             let line = Keyboard.readLine(prompt);
@@ -32,8 +35,8 @@ class Main {
             }
 
             let c = line.charAt(0);
-
-            if ((c = K_ESC) & (line.length() = 1)) {
+            
+            if ((c = K_Q) & (line.length() = 0)) {
                 let running = false;
                 do Output.printString("Bye Bye");
                 do Output.println();
@@ -41,9 +44,48 @@ class Main {
                 do vm.eval(line);
                 let linesPrinted = linesPrinted + 2;
             }
+
+            do vm.reset();
         }
 
         return;
+    }
+
+    function boolean stringsEqual(string a, string b) {
+        var int i;
+        var int aLength;
+        var int bLength;
+        var char c;
+
+        do Output.printString("eq");
+
+        do Output.printString("lengths");
+
+        if (~(aLength = bLength)) {
+            return false;
+        }
+
+        do Output.printString("a: ");
+        do Output.printString(a);
+        do Output.println();
+        do Output.printString("b: ");
+        do Output.printString(b);
+        do Output.println();
+
+        while (i < aLength) {
+            do Output.printInt(i);
+            do Output.printString(" < ");
+            do Output.printInt(aLength);
+            do Output.println();
+
+            let c = a.charAt(i);
+            if (~(c = b.charAt(i))) {
+                return false;
+            }
+            let i = i + 1;
+        }
+
+        return true;
     }
 }
 

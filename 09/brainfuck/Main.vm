@@ -1,11 +1,8 @@
 function Main.main 7
 call Brainfuck.init 0
 pop temp 0
-push constant 140
-pop local 1
-push constant 100
-call Brainfuck.new 1
-pop local 6
+push constant 81
+pop local 0
 push constant 2
 call String.new 1
 push constant 62
@@ -18,6 +15,9 @@ not
 pop local 3
 push constant 3
 pop local 2
+push constant 100
+call Brainfuck.new 1
+pop local 6
 push constant 14
 call String.new 1
 push constant 98
@@ -85,13 +85,13 @@ label IF_FALSE0
 push local 4
 push constant 0
 call String.charAt 2
-pop local 0
-push local 0
+pop local 1
 push local 1
+push local 0
 eq
 push local 4
 call String.length 1
-push constant 1
+push constant 0
 eq
 and
 if-goto IF_TRUE1
@@ -130,7 +130,126 @@ push constant 2
 add
 pop local 2
 label IF_END1
+push local 6
+call Brainfuck.reset 1
+pop temp 0
 goto WHILE_EXP0
 label WHILE_END0
 push constant 0
+return
+function Main.stringsEqual 4
+push constant 2
+call String.new 1
+push constant 101
+call String.appendChar 2
+push constant 113
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 7
+call String.new 1
+push constant 108
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 103
+call String.appendChar 2
+push constant 116
+call String.appendChar 2
+push constant 104
+call String.appendChar 2
+push constant 115
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push local 1
+push local 2
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+return
+label IF_FALSE0
+push constant 3
+call String.new 1
+push constant 97
+call String.appendChar 2
+push constant 58
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push argument 0
+call Output.printString 1
+pop temp 0
+call Output.println 0
+pop temp 0
+push constant 3
+call String.new 1
+push constant 98
+call String.appendChar 2
+push constant 58
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push argument 1
+call Output.printString 1
+pop temp 0
+call Output.println 0
+pop temp 0
+label WHILE_EXP0
+push local 0
+push local 1
+lt
+not
+if-goto WHILE_END0
+push local 0
+call Output.printInt 1
+pop temp 0
+push constant 3
+call String.new 1
+push constant 32
+call String.appendChar 2
+push constant 60
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push local 1
+call Output.printInt 1
+pop temp 0
+call Output.println 0
+pop temp 0
+push argument 0
+push local 0
+call string.charAt 2
+pop local 3
+push local 3
+push argument 1
+push local 0
+call string.charAt 2
+eq
+not
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 0
+return
+label IF_FALSE1
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+not
 return
