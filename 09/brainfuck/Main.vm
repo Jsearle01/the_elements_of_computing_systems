@@ -1,5 +1,7 @@
 function Main.main 7
-push constant 81
+call Brainfuck.init 0
+pop temp 0
+push constant 140
 pop local 1
 push constant 100
 call Brainfuck.new 1

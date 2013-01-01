@@ -1,6 +1,30 @@
 class Brainfuck {
+    static char K_PLUS;
+    static char K_MINUS;
+    static char K_LESS_THAN;
+    static char K_GREATER_THAN;
+    static char K_DOT;
+    static char K_APOSTROPY;
+    static char K_LEFT_SQUARE_BRACKET;
+    static char K_RIGTH_SQUARE_BRACKET;
+    static char K_SPACE;
+
     field Array array;
+    field String line;
     field int offset;
+
+    function void init() {
+        let K_PLUS                 = 43;
+        let K_MINUS                = 45;
+        let K_LESS_THAN            = 60;
+        let K_GREATER_THAN         = 62;
+        let K_DOT                  = 46;
+        let K_APOSTROPY            = 39;
+        let K_LEFT_SQUARE_BRACKET  = 91;
+        let K_RIGTH_SQUARE_BRACKET = 93;
+        let K_SPACE                = 32;
+        return;
+    }
 
     constructor Brainfuck new(int length) {
         let array = Array.new(length);
@@ -13,6 +37,7 @@ class Brainfuck {
         var int i;
         var char c;
 
+        let line = input;
         let length = input.length();
         while (i < length) {
             let c = input.charAt(i);
@@ -24,7 +49,82 @@ class Brainfuck {
     }
 
     function void evalChar(Brainfuck self, char c) {
-        do Output.printChar(c);
+        if (c = K_PLUS) {
+            do Brainfuck.actionPlus(self);
+            return;
+        }
+        if (c = K_MINUS) {
+            do Brainfuck.actionMinus(self);
+            return;
+        }
+        if (c = K_LESS_THAN) {
+            do Brainfuck.actionLessThan(self);
+            return;
+        }
+        if (c = K_GREATER_THAN) {
+            do Brainfuck.actionGreaterThan(self);
+            return;
+        }
+        if (c = K_DOT) {
+            do Brainfuck.actionDot(self);
+            return;
+        }
+        if (c = K_APOSTROPY) {
+            do Brainfuck.actionApostropy(self);
+            return;
+        }
+        if (c = K_LEFT_SQUARE_BRACKET) {
+            do Brainfuck.actionLeftBracket(self);
+            return;
+        }
+        if (c = K_RIGTH_SQUARE_BRACKET) {
+            do Brainfuck.actionRightBracket(self);
+            return;
+        }
+
+        // ignore unknown characters
+        // useful for comments
+
+        return;
+    }
+
+    function void actionPlus(Brainfuck self) {
+        do Output.printString("{+}");
+        return;
+    }
+
+    function void actionMinus(Brainfuck self) {
+        do Output.printString("{-}");
+        return;
+    }
+
+    function void actionLessThan(Brainfuck self) {
+        do Output.printString("{<}");
+        return;
+    }
+
+    function void actionGreaterThan(Brainfuck self) {
+        do Output.printString("{>}");
+        return;
+    }
+
+    function void actionDot(Brainfuck self) {
+        do Output.printString("{.}");
+        return;
+    }
+
+    function void actionApostropy(Brainfuck self) {
+        do Output.printString("{'}");
+        return;
+    }
+
+    function void actionLeftBracket(Brainfuck self) {
+        do Output.printString("{[}");
+        return;
+    }
+
+    function void actionRightBracket(Brainfuck self) {
+        do Output.printString("{]}");
         return;
     }
 }

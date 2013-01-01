@@ -1,17 +1,40 @@
+function Brainfuck.init 0
+push constant 43
+pop static 0
+push constant 45
+pop static 1
+push constant 60
+pop static 2
+push constant 62
+pop static 3
+push constant 46
+pop static 4
+push constant 39
+pop static 5
+push constant 91
+pop static 6
+push constant 93
+pop static 7
+push constant 32
+pop static 8
+push constant 0
+return
 function Brainfuck.new 0
-push constant 2
+push constant 3
 call Memory.alloc 1
 pop pointer 0
 push argument 0
 call Array.new 1
 pop this 0
 push constant 0
-pop this 1
+pop this 2
 push pointer 0
 return
 function Brainfuck.eval 3
 push argument 0
 pop pointer 0
+push argument 1
+pop this 1
 push argument 1
 call String.length 1
 pop local 0
@@ -41,7 +64,204 @@ push constant 0
 return
 function Brainfuck.evalChar 0
 push argument 1
-call Output.printChar 1
+push static 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 0
+call Brainfuck.actionPlus 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE0
+push argument 1
+push static 1
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push argument 0
+call Brainfuck.actionMinus 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE1
+push argument 1
+push static 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push argument 0
+call Brainfuck.actionLessThan 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE2
+push argument 1
+push static 3
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push argument 0
+call Brainfuck.actionGreaterThan 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE3
+push argument 1
+push static 4
+eq
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push argument 0
+call Brainfuck.actionDot 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE4
+push argument 1
+push static 5
+eq
+if-goto IF_TRUE5
+goto IF_FALSE5
+label IF_TRUE5
+push argument 0
+call Brainfuck.actionApostropy 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE5
+push argument 1
+push static 6
+eq
+if-goto IF_TRUE6
+goto IF_FALSE6
+label IF_TRUE6
+push argument 0
+call Brainfuck.actionLeftBracket 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE6
+push argument 1
+push static 7
+eq
+if-goto IF_TRUE7
+goto IF_FALSE7
+label IF_TRUE7
+push argument 0
+call Brainfuck.actionRightBracket 1
+pop temp 0
+push constant 0
+return
+label IF_FALSE7
+push constant 0
+return
+function Brainfuck.actionPlus 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 43
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+return
+function Brainfuck.actionMinus 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 45
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+return
+function Brainfuck.actionLessThan 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 60
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+return
+function Brainfuck.actionGreaterThan 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 62
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+return
+function Brainfuck.actionDot 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 46
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+return
+function Brainfuck.actionApostropy 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 39
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+return
+function Brainfuck.actionLeftBracket 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 91
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+return
+function Brainfuck.actionRightBracket 0
+push constant 3
+call String.new 1
+push constant 123
+call String.appendChar 2
+push constant 93
+call String.appendChar 2
+push constant 125
+call String.appendChar 2
+call Output.printString 1
 pop temp 0
 push constant 0
 return

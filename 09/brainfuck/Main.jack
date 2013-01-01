@@ -1,13 +1,15 @@
 class Main {
     function void main() {
         var char c;
-        var char KEY_Q;
+        var char K_ESC;
         var int linesPrinted;
         var boolean running;
         var String line, prompt;
         var Brainfuck vm;
 
-        let KEY_Q = 81;
+        do Brainfuck.init();
+
+        let K_ESC = 140;
 
         let vm = Brainfuck.new(100);
         let prompt = "> ";
@@ -31,7 +33,7 @@ class Main {
 
             let c = line.charAt(0);
 
-            if ((c = KEY_Q) & (line.length() = 1)) {
+            if ((c = K_ESC) & (line.length() = 1)) {
                 let running = false;
                 do Output.printString("Bye Bye");
                 do Output.println();
