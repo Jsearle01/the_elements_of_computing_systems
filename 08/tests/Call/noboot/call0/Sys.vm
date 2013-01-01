@@ -1,5 +1,0 @@
-call testFunc 6
-hlasm END
-(testFunc)
-END
-

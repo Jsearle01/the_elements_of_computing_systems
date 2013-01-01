@@ -1,0 +1,12 @@
+function Sys.init 0
+push constant 2
+push constant 3
+call Sys.testFunc 2
+return
+
+function Sys.testFunc 0
+push argument 0
+push argument 1
+add
+return
+

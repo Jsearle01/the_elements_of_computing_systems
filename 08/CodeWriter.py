@@ -97,6 +97,7 @@ class CodeWriter:
         ''')
 
         self.writeVMReturn()
+        self.writeVMCall()
 
     def writeLabel(self, label):
         asm('''
@@ -120,12 +121,36 @@ class CodeWriter:
         ''', self.current_function, label)
 
     def writeCall(self, functionName, numArgs):
+        call_header_length = 5
         asm('''
         ,stamp 4
 
         # push return-address
-            ,set D return_{uid}
+            ,set D RETURN_{uid}
             ,push D
+
+        # push functionName
+            ,set D {functionName}
+            ,push D
+
+        # push offset
+            ,set D {offset}
+            ,push D
+
+        ,goto VMCall
+
+        (RETURN_{uid})
+        ''',
+        functionName = functionName,
+        offset=int(numArgs) + call_header_length,
+        uid = unique_id()
+        )
+
+    def writeVMCall(self):
+        asm('''
+        (VMCall)
+        ,pop {offset}
+        ,pop {functionName}
         # push LCL
             ,push *LCL
         # push ARG
@@ -136,17 +161,17 @@ class CodeWriter:
             ,push *THAT
         # ARG=SP-n-5
             ,set ARG *SP
-            ,-= ARG {offset}
+            @{offset}
+            D=M
+            @ARG
+            M=M-D
         # LCL=SP
             ,set LCL *SP
         # goto f
-            ,goto {functionName}
-        # (return-address)
-            (return_{uid})
+            ,goto *{functionName}
         ''',
-        functionName = functionName,
-        offset=int(numArgs) + 5,
-        uid = unique_id()
+        offset='R13',
+        functionName='R14'
         )
 
     def writeFunction(self, functionName, numLocals):
