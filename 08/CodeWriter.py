@@ -150,39 +150,76 @@ class CodeWriter:
             asm(',push 0')
 
     def writeReturn(self):
-        #asm('''
-        #,stamp 6
-        ## FRAME = LCL
+        asm('''
+        ,stamp 6
+        # FRAME = LCL
             #,set {FRAME} *LCL
-        ## RET = *(FRAME-5)
-            #,set {RET} *{FRAME}
-            #,-= {RET} 5
-            #,set {RET} **{RET}
-        ## *ARG = pop()
+                @LCL
+                D=M
+                @{FRAME}
+                M=D
+        # RET = *(FRAME-5)
+                @{RETURN}
+                M=D
+                @5
+                D=A
+                @{RETURN}
+                M=M-D
+                A=M
+                D=M
+                @{RETURN}
+                M=D
+        # *ARG = pop()
             #,pop D
             #,set *ARG D
-        ## SP = ARG+1
+                @SP
+                M=M-1
+                A=M
+                D=M
+                @ARG
+                A=M
+                M=D
+        # SP = ARG+1
             #,set SP *ARG
             #,++ SP
-        ## THAT = *(FRAME-1)
-            #,set THAT *{FRAME}
-            #,-= THAT 1
-            #,set THAT **THAT
-        ## THIS = *(FRAME-2)
-            #,set THIS *{FRAME}
-            #,-= THIS 2
-            #,set THIS **THIS
-        ## ARG  = *(FRAME-3)
-            #,set ARG *{FRAME}
-            #,-= ARG 3
-            #,set ARG **ARG
-        ## LCL  = *(FRAME-4)
-            #,set LCL *{FRAME}
-            #,-= LCL 4
-            #,set LCL **LCL
-        ## goto RET
-            #,goto *{RET}
-        #''', FRAME='R13', RET='R14')
+                @ARG
+                D=M
+                @SP
+                M=D
+                M=M+1
+        # THAT = *(--FRAME)
+                @{FRAME}
+                M=M-1
+                A=M
+                D=M
+                @THAT
+                M=D
+        # THIS = *(--FRAME)
+                @{FRAME}
+                M=M-1
+                A=M
+                D=M
+                @THIS
+                M=D
+        # ARG  = *(--FRAME)
+                @{FRAME}
+                M=M-1
+                A=M
+                D=M
+                @ARG
+                M=D
+        # LCL  = *(--FRAME)
+                @{FRAME}
+                M=M-1
+                A=M
+                D=M
+                @LCL
+                M=D
+        # goto RET
+            ,goto *{RETURN}
+        ''', FRAME='R13', RETURN='R14')
+
+    def writeReturn2(self):
         asm('''
         ,stamp 6
         # FRAME = LCL
