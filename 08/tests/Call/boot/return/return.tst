@@ -12,17 +12,17 @@ output-list
     RAM[260]%D1.6.1
     RAM[261]%D1.6.1;
 
-set RAM[0] 261,
-set RAM[1] 261,
-set RAM[2] 256,
+set RAM[0] 0,
+set RAM[1] 0,
+set RAM[2] 0,
 
-set RAM[256] 200,
-set RAM[257] 101,
-set RAM[258] 102,
-set RAM[259] 103,
-set RAM[260] 69,
+set RAM[256] 6,
+set RAM[257] 7,
+set RAM[258] 8,
+set RAM[259] 9,
+set RAM[260] 0,
 
-repeat 100 {
+repeat 200 {
   ticktock;
 }
 

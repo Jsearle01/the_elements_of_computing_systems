@@ -87,7 +87,16 @@ class CodeWriter:
         ,stamp 0
         ,set SP 256
         ''')
+
         self.writeCall('Sys.init', '0')
+
+        asm('''
+        (END)
+        @END
+        0;JMP
+        ''')
+
+        self.writeVMReturn()
 
     def writeLabel(self, label):
         asm('''
@@ -150,8 +159,12 @@ class CodeWriter:
             asm(',push 0')
 
     def writeReturn(self):
+        asm(',goto VMReturn')
+
+    def writeVMReturn(self):
         asm('''
         ,stamp 6
+        (VMReturn)
         # FRAME = LCL
             #,set {FRAME} *LCL
                 @LCL
