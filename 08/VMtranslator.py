@@ -35,10 +35,10 @@ argument_parser.add_argument('--stamp',
 args = argument_parser.parse_args()
 
 if isdir(args.source):
-    filenames = glob(join(args.source, '*.vm'))
-    output_filename = args.source + '.asm'
-    output_filename = join(args.source,
-            splitext(basename(args.source))[0] + '.asm')
+    source = args.source.rstrip('/')
+    filenames = glob(join(source, '*.vm'))
+    output_filename = join(source,
+            splitext(basename(source))[0] + '.asm')
 else:
     filenames = [args.source]
     output_filename = split(args.source)[0] + '.asm'
