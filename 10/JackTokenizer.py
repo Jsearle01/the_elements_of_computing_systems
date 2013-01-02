@@ -54,7 +54,7 @@ class JackTokenizer():
         return self.tokens[self.currentToken].typ
 
     def tokenValue(self):
-        return self.tokens[self.currentToken].val
+        return self.tokens[self.currentToken].value
 
     def removeComments(self, s):
         'taken from python re module documentation'
