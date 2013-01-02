@@ -37,7 +37,8 @@ def isSymbol(c):
 class JackTokenizer():
     def __init__(self, file):
         self.currentToken = 0
-        self.tokens = tuple(self.tokenize(file.read()))
+        text = ''.join(self.removeComments(file.read()))
+        self.tokens = tuple(self.tokenize(text))
         self.tokensLength = len(self.tokens)
 
     def hasMoreTokens(self):
@@ -54,6 +55,42 @@ class JackTokenizer():
 
     def tokenValue(self):
         return self.tokens[self.currentToken].val
+
+    def removeComments(self, s):
+        'taken from python re module documentation'
+        token_specification = [
+            ('commentStart',      r'/\*'), # Comment_Line
+            ('commentEnd',      r'\*/'),   # Comment_Line
+            ('newline', r'\n'),            # Line endings
+            ('other', r'.'),             # Line endings
+        ]
+
+        tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
+        get_token = re.compile(tok_regex).match
+        line = 1
+        pos = line_start = 0
+        mo = get_token(s)
+
+        inComment = False
+
+        while mo is not None:
+            typ = mo.lastgroup
+            if typ == 'newline':
+                line_start = pos
+                line += 1
+                yield '\n'
+            elif typ == 'commentStart':
+                inComment = True
+            elif typ == 'commentEnd':
+                inComment = False
+            else:
+                if not inComment:
+                    val = mo.group(typ)
+                    yield val
+            pos = mo.end()
+            mo = get_token(s, pos)
+        if pos != len(s):
+            raise RuntimeError('Unexpected character %r on line %d' %(s[pos], line))
 
     def tokenize(self, s):
         'taken from python re module documentation'

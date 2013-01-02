@@ -1,3 +1,7 @@
+/* Multiline comment
+ * 2nd line of a Multiline comment
+ */
+
 // this is a comment
 if (x < 153) {
     let city = "Paris";
