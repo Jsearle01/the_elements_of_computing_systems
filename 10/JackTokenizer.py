@@ -7,6 +7,7 @@ import sys
 import functools
 
 from argparse import ArgumentParser
+from glob import glob
 from os.path import split, splitext, isdir, join, basename
 
 Token = collections.namedtuple('Token', ['typ', 'value', 'line', 'column'])
@@ -60,6 +61,7 @@ class JackTokenizer():
             ('integerConstant',  r'\d+'),           # Integer
             ('identifier',      r'[A-Za-z0-9_]+'), # Identifiers
             # ('symbol',  r'[{}()\[\].,;+\-*\/&|<>=~]'),      # Symbols
+            ('commentLine',      r'//.*'), # Comment_Line
             ('symbol',  re_symbols),      # Symbols
             ('stringConstant', r'"(\.|[^"])*"'),   # Line endings
             ('newline', r'\n'),            # Line endings
@@ -75,6 +77,8 @@ class JackTokenizer():
             if typ == 'newline':
                 line_start = pos
                 line += 1
+            elif typ == 'commentLine':
+                pass
             elif typ != 'skip':
                 val = mo.group(typ)
                 if typ == 'identifier' and val in keywords:
@@ -142,5 +146,6 @@ if __name__ == '__main__':
                 j.advance()
             write('</tokens>')
         except RuntimeError as s:
+            print(filename_in)
             print(s)
 

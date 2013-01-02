@@ -1,3 +1,5 @@
+// this is a comment
 if (x < 153) {
     let city = "Paris";
 }
+// this is a comment
