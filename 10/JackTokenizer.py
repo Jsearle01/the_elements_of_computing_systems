@@ -156,9 +156,11 @@ def get_filenames(source):
             filenames.append((filename_in, filename_out))
     else:
         filename_in = args.source
-        filename_out = splitext(basename(args.source))[0] + 'T.xml'
+        filename_out = join(split(args.source)[0],
+                splitext(basename(source))[0] + 'T.xml')
         filenames = [(filename_in, filename_out)]
     return filenames
+
 
 if __name__ == '__main__':
     args = get_arguments()
