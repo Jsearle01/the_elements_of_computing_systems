@@ -179,7 +179,7 @@ if __name__ == '__main__':
             while j.hasMoreTokens():
                 typ, val, _, _ = j.token()
                 val = html.escape(val)
-                write('<{}> {} <{}>'.format(typ, val, typ))
+                write('<{}> {} </{}>'.format(typ, val, typ))
                 j.advance()
             write('</tokens>')
         except RuntimeError as s:
