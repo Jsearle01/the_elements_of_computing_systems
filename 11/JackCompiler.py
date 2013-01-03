@@ -12,7 +12,7 @@ from CompilationEngine import CompilationEngine
 suffix = '.vm'
 
 def get_arguments():
-    argument_parser = ArgumentParser(description='Analyze Jack code')
+    argument_parser = ArgumentParser(description='Compile Jack code')
 
     argument_parser.add_argument(
         'source',

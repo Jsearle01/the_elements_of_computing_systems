@@ -1,32 +1,39 @@
 #! /usr/bin/env python3
 
+import functools
+
 class VMWriter():
     def __init__(self, file):
-        self.file = file
+        global write
+        write = functools.partial(print, file=file)
+
 
     def writePush(self, segment, index):
-        pass
+        write('push {} {}'.format(segment, index))
 
     def writePop(self, Segment, index):
-        pass
+        write('pop {} {}'.format(segment, index))
 
     def WriteArithmetic(self, command):
-        pass
+        write('{}'.format(command))
 
     def WriteLabel(self, label):
-        pass
+        write('label {}'.format(label))
 
     def WriteGoto(self, label):
-        pass
+        write('goto {}'.format(label))
 
     def WriteIf(self, label):
-        pass
+        write('if {}'.format(label))
 
     def writeCall(self, name, nArgs):
-        pass
+        write('call {} {}'.format(name, nArgs))
+
+    def writeFunction(self, name, nLocals):
+        write('function {} {}'.format(name, nLocals))
 
     def writeReturn(self):
-        pass
+        write('return'.format())
 
 
 if __name__ == '__main__':
