@@ -1,5 +1,5 @@
 all:
-	./run_and_compare.sh
+	python3 JackAnalyzer.py test.jack --stdout
 
 tests:
 	./run_and_compare.sh

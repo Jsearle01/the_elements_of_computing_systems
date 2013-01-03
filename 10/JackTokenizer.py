@@ -36,25 +36,75 @@ def isSymbol(c):
 
 class JackTokenizer():
     def __init__(self, file):
-        self.currentToken = 0
+        self.offset = 0
         text = ''.join(self.removeComments(file.read()))
         self.tokens = tuple(self.tokenize(text))
+        self.currentToken = self.tokens[0]
         self.tokensLength = len(self.tokens)
 
     def hasMoreTokens(self):
         return self.currentToken < self.tokensLength
 
     def advance(self):
-        self.currentToken += 1
+        self.offset += 1
+        try:
+            self.currentToken = self.tokens[self.offset]
+        except IndexError:
+            self.currentToken = None
+
+    def skip(self, typ, val):
+        currentType, currentValue, line, col = self.token()
+        if currentType == typ and currentValue == val:
+            self.advance()
+        else:
+            self.expected(typ, val)
+
+    def expected(self, *messages):
+        currentType, currentValue, line, col = self.token()
+        message = ' '.join(messages)
+        raise SyntaxError(
+                'expected {} @ line: {}, col: {} but found: {} {}'.format(
+                    message,
+                    line, col,
+                    currentType, currentValue))
 
     def token(self):
-        return self.tokens[self.currentToken]
+        return self.tokens[self.offset]
 
     def tokenType(self):
-        return self.tokens[self.currentToken].typ
+        return self.currentToken.typ
 
     def tokenValue(self):
-        return self.tokens[self.currentToken].value
+        return self.currentToken.value
+
+    def tokenIs(self, typ, value):
+        return typ == self.currentToken.typ and value == self.currentToken.value
+
+    def tokenIn(self, *tokens):
+        for typ, value in tokens:
+            if self.tokenIs(typ, value):
+                return True
+        return False
+
+    def tokenIsType(self, *types):
+        for typ in types:
+            if typ == self.currentToken.typ:
+                return True
+        return False
+
+    def tokenIsKeyword(self, *values):
+        if self.tokenIsType('keyword'):
+            for value in values:
+                if value == self.currentToken.value:
+                    return True
+        return False
+
+    def tokenIsSymbol(self, symbols):
+        if self.tokenIsType('symbol'):
+            for symbol in symbols:
+                if symbol == self.currentToken.value:
+                    return True
+        return False
 
     def removeComments(self, s):
         'taken from python re module documentation'
