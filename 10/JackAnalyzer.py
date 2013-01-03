@@ -30,12 +30,12 @@ def get_filenames(source):
         source = args.source.rstrip('/')
         for filename_in in glob(join(source, '*.jack')):
             filename_out = join(source,
-                    splitext(basename(source))[0] + 'T.xml')
+                    splitext(basename(source))[0] + '.xml')
             filenames.append((filename_in, filename_out))
     else:
         filename_in = args.source
         filename_out = join(split(args.source)[0],
-                splitext(basename(source))[0] + 'T.xml')
+                splitext(basename(source))[0] + '.xml')
         filenames = [(filename_in, filename_out)]
     return filenames
 
@@ -52,6 +52,6 @@ if __name__ == '__main__':
             file_out = open(filename_out, "w")
 
         tokenizer = JackTokenizer(open(filename_in))
-        compiler = CompilationEngine(tokenizer, filename_out)
+        compiler = CompilationEngine(tokenizer, file_out)
         compiler.compileClass()
 

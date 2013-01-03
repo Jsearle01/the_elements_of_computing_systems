@@ -43,7 +43,7 @@ class JackTokenizer():
         self.tokensLength = len(self.tokens)
 
     def hasMoreTokens(self):
-        return self.currentToken < self.tokensLength
+        return self.offset < self.tokensLength
 
     def advance(self):
         self.offset += 1

@@ -5,10 +5,6 @@ def tag(t, v):
 
 tagStack = []
 
-def indentPrint(s):
-    indent = len(tagStack) * '  '
-    print(indent + s)
-
 def openTag(s):
     global indentLevel
     indentPrint('<%s>' % s)
@@ -24,11 +20,10 @@ class CompilationEngine():
         self.tokenizer = tokenizer
         self.file_out = file_out
 
-        print(tokenizer.tokens)
-
         global token, advance, expected, tokenValue
         global tokenIn, tokenIs, tokenIsType, tokenIsKeyword
         global tokenIsSymbol
+
         token          = self.tokenizer.token
         advance        = self.tokenizer.advance
         expected       = self.tokenizer.expected
@@ -40,7 +35,7 @@ class CompilationEngine():
         tokenIsSymbol  = self.tokenizer.tokenIsSymbol
 
         global skip, skipToken, skipType, printToken
-        global skipIdentifier
+        global skipIdentifier, indentPrint
 
         def skip(t, v):
             self.tokenizer.skip(t, v)
@@ -68,6 +63,11 @@ class CompilationEngine():
         def printToken():
             t, v, _, _ = token()
             tag(t, v)
+
+        def indentPrint(s):
+            indent = len(tagStack) * '  '
+            print(indent + s, file=file_out)
+
 
     def compileClass(self):
         openTag('class')
