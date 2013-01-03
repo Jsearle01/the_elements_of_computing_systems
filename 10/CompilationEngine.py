@@ -277,7 +277,7 @@ class CompilationEngine():
             elif tokenIs('symbol', '('):
                 # subroutineName ( expressions )
                 skipToken()
-                self.compileExpressionList()
+                self.compileExpression()
                 skip('symbol', ')')
                 pass
             elif tokenIs('symbol', '.'):
@@ -289,8 +289,15 @@ class CompilationEngine():
             else:
                 # varName
                 pass
+        elif tokenIs('symbol', '('):
+            # subroutineName ( expressions )
+            skipToken()
+            self.compileExpression()
+            skip('symbol', ')')
+            pass
         elif tokenIsSymbol('-~'):
             skipToken()
+            self.compileTerm()
         else:
             raise SyntaxError(token())
 
