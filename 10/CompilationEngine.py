@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 
+import html
+
 def tag(t, v):
-    indentPrint('<{0}> {1} </{0}>'.format(t, v))
+    indentPrint('<{0}> {1} </{0}>'.format(t, html.escape(v)))
 
 tagStack = []
 
@@ -166,7 +168,7 @@ class CompilationEngine():
         closeTag()
 
     def compileStatements(self):
-        openTag('statments')
+        openTag('statements')
 
         while tokenIsKeyword('let', 'if', 'while', 'do', 'return'):
             value = tokenValue()

@@ -34,7 +34,7 @@
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
-      <statments>
+      <statements>
         <letStatement>
           <keyword> let </keyword>
           <identifier> x </identifier>
@@ -86,7 +86,7 @@
           </expression>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
@@ -100,7 +100,7 @@
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
-      <statments>
+      <statements>
         <doStatement>
           <keyword> do </keyword>
           <identifier> Memory </identifier>
@@ -121,7 +121,7 @@
           <keyword> return </keyword>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
@@ -135,7 +135,7 @@
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
-      <statments>
+      <statements>
         <doStatement>
           <keyword> do </keyword>
           <identifier> Screen </identifier>
@@ -198,7 +198,7 @@
           <keyword> return </keyword>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
@@ -212,7 +212,7 @@
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
-      <statments>
+      <statements>
         <doStatement>
           <keyword> do </keyword>
           <identifier> Screen </identifier>
@@ -275,7 +275,7 @@
           <keyword> return </keyword>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
@@ -289,7 +289,7 @@
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
-      <statments>
+      <statements>
         <ifStatement>
           <keyword> if </keyword>
           <symbol> ( </symbol>

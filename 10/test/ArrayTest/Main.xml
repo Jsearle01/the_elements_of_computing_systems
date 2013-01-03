@@ -32,7 +32,7 @@
         <identifier> sum </identifier>
         <symbol> ; </symbol>
       </varDec>
-      <statments>
+      <statements>
         <letStatement>
           <keyword> let </keyword>
           <identifier> length </identifier>
@@ -95,14 +95,14 @@
             <term>
               <identifier> i </identifier>
             </term>
-            <symbol> < </symbol>
+            <symbol> &lt; </symbol>
             <term>
               <identifier> length </identifier>
             </term>
           </expression>
           <symbol> ) </symbol>
           <symbol> { </symbol>
-          <statments>
+          <statements>
             <letStatement>
               <keyword> let </keyword>
               <identifier> a </identifier>
@@ -147,7 +147,7 @@
               </expression>
               <symbol> ; </symbol>
             </letStatement>
-          </statments>
+          </statements>
           <symbol> } </symbol>
         </whileStatement>
         <letStatement>
@@ -179,14 +179,14 @@
             <term>
               <identifier> i </identifier>
             </term>
-            <symbol> < </symbol>
+            <symbol> &lt; </symbol>
             <term>
               <identifier> length </identifier>
             </term>
           </expression>
           <symbol> ) </symbol>
           <symbol> { </symbol>
-          <statments>
+          <statements>
             <letStatement>
               <keyword> let </keyword>
               <identifier> sum </identifier>
@@ -224,7 +224,7 @@
               </expression>
               <symbol> ; </symbol>
             </letStatement>
-          </statments>
+          </statements>
           <symbol> } </symbol>
         </whileStatement>
         <doStatement>
@@ -278,7 +278,7 @@
           <keyword> return </keyword>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>

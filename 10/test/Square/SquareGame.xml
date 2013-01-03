@@ -24,7 +24,7 @@
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
-      <statments>
+      <statements>
         <letStatement>
           <keyword> let </keyword>
           <identifier> square </identifier>
@@ -79,7 +79,7 @@
           </expression>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
@@ -93,7 +93,7 @@
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
-      <statments>
+      <statements>
         <doStatement>
           <keyword> do </keyword>
           <identifier> square </identifier>
@@ -125,7 +125,7 @@
           <keyword> return </keyword>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
@@ -151,7 +151,7 @@
         <identifier> exit </identifier>
         <symbol> ; </symbol>
       </varDec>
-      <statments>
+      <statements>
         <letStatement>
           <keyword> let </keyword>
           <identifier> exit </identifier>

@@ -18,7 +18,7 @@
         <identifier> game </identifier>
         <symbol> ; </symbol>
       </varDec>
-      <statments>
+      <statements>
         <letStatement>
           <keyword> let </keyword>
           <identifier> game </identifier>
@@ -62,7 +62,7 @@
           <keyword> return </keyword>
           <symbol> ; </symbol>
         </returnStatement>
-      </statments>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
