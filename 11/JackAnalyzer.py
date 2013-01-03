@@ -2,11 +2,14 @@
 
 import sys
 
+from glob import glob
 from argparse import ArgumentParser
 from os.path import isdir, join, split, splitext, basename
 
 from JackTokenizer import JackTokenizer
 from CompilationEngine import CompilationEngine
+
+suffix = '.vm'
 
 def get_arguments():
     argument_parser = ArgumentParser(description='Analyze Jack code')
@@ -30,12 +33,12 @@ def get_filenames(source):
         source = args.source.rstrip('/')
         for filename_in in glob(join(source, '*.jack')):
             filename_out = join(source,
-                    splitext(basename(source))[0] + '.xml')
+                    splitext(basename(source))[0] + suffix)
             filenames.append((filename_in, filename_out))
     else:
         filename_in = args.source
         filename_out = join(split(args.source)[0],
-                splitext(basename(source))[0] + '.xml')
+                splitext(basename(source))[0] + suffix)
         filenames = [(filename_in, filename_out)]
     return filenames
 
