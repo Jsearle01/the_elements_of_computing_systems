@@ -42,6 +42,8 @@ class CompilationEngine():
         self.subroutineSymbols = SymbolTable(file_out, debug)
         self.subroutineTypes = {}
 
+        self.nClassFields = 0
+
         global vmw
         vmw = self.vmw = VMWriter(file_out)
 
@@ -64,12 +66,10 @@ class CompilationEngine():
         global isMethod, getSegment, getThis, uniqueLabel
         global push, pop, call
 
-
         def uniqueLabel(label):
             uid = self.labelCounter[label]
             self.labelCounter[label] += 1
             return '%s%s' % (label, uid)
-
 
         def skip(t, v):
             self.tokenizer.skip(t, v)
@@ -175,6 +175,7 @@ class CompilationEngine():
         typ = tokenValue()
         skipType()
 
+        if kind == 'field': self.nClassFields += 1
         name = tokenValue()
         skipIdentifier()
 
@@ -183,6 +184,7 @@ class CompilationEngine():
         while tokenIs('symbol', ','):
             skipToken()
 
+            if kind == 'field': self.nClassFields += 1
             name = tokenValue()
             skipIdentifier() # varName
             self.classSymbols.Define(name, typ, kind)
@@ -236,8 +238,7 @@ class CompilationEngine():
             push('argument', 0)
             pop('pointer', 0)
         elif subroutineType == 'constructor':
-            sizeThis = 1
-            push('constant', sizeThis + nLocals)
+            push('constant', self.nClassFields)
             vmw.writeCall('Memory.alloc', 1)
             pop('pointer', 0)
         else:
