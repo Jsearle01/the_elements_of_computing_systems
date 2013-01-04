@@ -121,13 +121,18 @@ class CompilationEngine():
                 return None
 
         def call(lhsName, functionName, nArgs):
-            this = getThis(lhsName)
-            if this:
-                nArgs += 1
-                push(this.kind, this.index)
-                callName = '%s.%s' % (this.typ, functionName)
+            if lhsName:
+                this = getThis(lhsName)
+                if this:
+                    nArgs += 1
+                    push(this.kind, this.index)
+                    callName = '%s.%s' % (this.typ, functionName)
+                else:
+                    callName = '%s.%s' % (lhsName, functionName)
             else:
-                callName = '%s.%s' % (lhsName, functionName)
+                push('pointer', 0)
+                nArgs += 1
+                callName = '%s.%s' % (self.currentClass, functionName)
             vmw.writeCall(callName, nArgs)
 
         def getSegment(kind):
@@ -378,19 +383,23 @@ class CompilationEngine():
         # true
         skip('symbol', '{')
         self.compileStatements()
-        vmw.WriteGoto(if_end)
         skip('symbol', '}')
-
-        vmw.WriteLabel(if_false)
 
         # else
         if tokenIsKeyword('else'):
+            vmw.WriteGoto(if_end)
+            vmw.WriteLabel(if_false)
+
             skipToken()
             skip('symbol', '{')
             self.compileStatements()
             skip('symbol', '}')
 
-        vmw.WriteLabel(if_end)
+            vmw.WriteLabel(if_end)
+        else:
+            vmw.WriteLabel(if_false)
+
+
         closeTag()
 
     def compileWhile(self):
@@ -433,7 +442,7 @@ class CompilationEngine():
             skipIdentifier()
         else:
             # method call
-            lhs = self.currentClass
+            lhs = None
             functionName = identifier
 
         skip('symbol', '(')
