@@ -11,7 +11,7 @@ class VMWriter():
     def writePush(self, segment, index):
         write('push {} {}'.format(segment, index))
 
-    def writePop(self, Segment, index):
+    def writePop(self, segment, index):
         write('pop {} {}'.format(segment, index))
 
     def WriteArithmetic(self, command):
@@ -24,10 +24,12 @@ class VMWriter():
         write('goto {}'.format(label))
 
     def WriteIf(self, label):
-        write('if {}'.format(label))
+        write('if-goto {}'.format(label))
 
     def writeCall(self, name, nArgs):
         write('call {} {}'.format(name, nArgs))
+        if nArgs == 0:
+            self.writePop('temp', 0)
 
     def writeFunction(self, name, nLocals):
         write('function {} {}'.format(name, nLocals))

@@ -1,9 +1,13 @@
 #! /usr/bin/env python3
 
-import html
+import itertools
 
 from VMWriter import VMWriter
 from SymbolTable import SymbolTable
+
+from collections import namedtuple
+
+Function = namedtuple('Function', ['type', 'returnType'])
 
 expressionCommands = {
         '+' : 'add',
@@ -15,29 +19,39 @@ expressionCommands = {
         '|' : 'or',
         }
 
+uniqueID = itertools.count(0)
+
+def uniqueLabels(*labels):
+    uid = uniqueID.__next__()
+    unique_labels = ['%s_%s' % (label, uid) for label in labels]
+    return unique_labels
+
 def tag(t, v):
-    indentPrint('<{0}> {1} </{0}>'.format(t, html.escape(v)))
+    indentPrint('({0} {1})'.format(t, v))
 
 tagStack = []
 
 def openTag(s):
     global indentLevel
-    indentPrint('<%s>' % s)
+    indentPrint('(%s' % s)
     tagStack.append(s)
 
 def closeTag():
     global indentLevel
     s = tagStack.pop()
-    indentPrint('</%s>' % s)
+    indentPrint(')')
 
 class CompilationEngine():
-    def __init__(self, tokenizer, file_out):
+    def __init__(self, tokenizer, file_out, debug=False):
         self.tokenizer = tokenizer
         self.file_out = file_out
 
+        self.classSymbols = SymbolTable(file_out, debug)
+        self.subroutineSymbols = SymbolTable(file_out, debug)
+        self.subroutineTypes = {}
+
         global vmw
-        self.vmw = VMWriter(file_out)
-        vmw = self.vmw
+        vmw = self.vmw = VMWriter(file_out)
 
         global token, advance, expected, tokenValue
         global tokenIn, tokenIs, tokenIsType, tokenIsKeyword
@@ -54,7 +68,7 @@ class CompilationEngine():
         tokenIsSymbol  = self.tokenizer.tokenIsSymbol
 
         global skip, skipToken, skipType, printToken
-        global skipIdentifier, indentPrint
+        global skipIdentifier, indentPrint, getSymbol
 
         def skip(t, v):
             self.tokenizer.skip(t, v)
@@ -83,10 +97,21 @@ class CompilationEngine():
             t, v, _, _ = token()
             tag(t, v)
 
-        def indentPrint(s):
-            return
-            indent = len(tagStack) * '  '
-            print(indent + s, file=file_out)
+        if debug == True:
+            def indentPrint(s):
+                indent = len(tagStack) * '  '
+                print(indent + s, file=file_out)
+        else:
+            def indentPrint(s):
+                pass
+
+        def getSymbol(name):
+            s = self.subroutineSymbols.Symbol(name)
+            if s is None:
+                s = self.classSymbols.Symbol(name)
+            if s is None:
+                raise SyntaxError('unknown variable: {}'.format(name))
+            return s
 
     def compileClass(self):
         openTag('class')
@@ -114,20 +139,43 @@ class CompilationEngine():
         openTag('classVarDec')
         skipToken()
 
+        kind = tokenValue()
+        skipKeyword('field', 'static')
+
+        typ = tokenValue()
         skipType()
+
+        name = tokenValue()
         skipIdentifier()
+
+        self.classSymbols.Define(name, typ, kind)
 
         while tokenIs('symbol', ','):
             skipToken()
+
+            name = tokenValue()
             skipIdentifier() # varName
+            self.classSymbols.Define(name, typ, kind)
 
         skip('symbol', ';')
 
         closeTag()
 
     def compileSubroutine(self):
+
+        self.subroutineSymbols.startSubroutine()
+
         openTag('subroutineDec')
+
+        subroutineType = tokenValue()
         skipToken()
+
+        # TODO implement method
+        if subroutineType == 'method':
+            # extra argument for 'this'
+            pass
+
+        returnType = tokenValue()
 
         if tokenIsKeyword('void'):
             skipToken()
@@ -135,28 +183,31 @@ class CompilationEngine():
             skipType()
 
         functionName = '{}.{}'.format(self.currentClass, tokenValue())
-        # functionName = tokenValue()
         skipIdentifier()
 
-        nArgs = self.compileParameterList()
+        self.subroutineTypes[functionName] = Function(subroutineType,
+                returnType)
 
-        vmw.writeFunction(functionName, nArgs)
+        self.compileParameterList()
 
-        self.compileSubroutineBody()
 
-        closeTag()
-
-    def compileSubroutineBody(self):
         openTag('subroutineBody')
         skip('symbol', '{')
 
+        nLocals = 0
         while tokenIsKeyword('var'):
-            self.compileVarDec()
+            nLocals += self.compileVarDec()
+
+        vmw.writeFunction(functionName, nLocals)
 
         self.compileStatements()
 
         skip('symbol', '}')
+
         closeTag()
+
+        closeTag()
+
 
     def compileParameterList(self):
         count = 0
@@ -164,15 +215,27 @@ class CompilationEngine():
         openTag('parameterList')
 
         if not tokenIsSymbol(')'):
+            typ = tokenValue()
             skipType()
+
+            name = tokenValue()
             skipIdentifier()
+            
+            self.subroutineSymbols.Define(name, typ, 'argument')
 
             count += 1
 
             while tokenIs('symbol', ','):
                 skipToken()
+
+                typ = tokenValue()
                 skipType()
+
+                name = tokenValue()
                 skipIdentifier() # varName
+
+                self.subroutineSymbols.Define(name, typ, 'argument')
+
                 count += 1
 
         closeTag()
@@ -180,19 +243,30 @@ class CompilationEngine():
         return count
 
     def compileVarDec(self):
+        nVars = 0
         openTag('varDec')
         skipToken()
 
+        typ = tokenValue()
         skipType()
+
+        name = tokenValue()
         skipIdentifier()
+        nVars += 1
+
+        self.subroutineSymbols.Define(name, typ, 'local')
 
         while tokenIs('symbol', ','):
             skipToken()
+            name = tokenValue()
             skipIdentifier() # varName
+            self.subroutineSymbols.Define(name, typ, 'local')
+            nVars += 1
 
         skip('symbol', ';')
 
         closeTag()
+        return nVars
 
     def compileStatements(self):
         openTag('statements')
@@ -217,6 +291,8 @@ class CompilationEngine():
     def compileLet(self):
         openTag('letStatement')
         skip('keyword', 'let')
+
+        lhsName = tokenValue()
         skipIdentifier()
 
         while tokenIs('symbol', '['):
@@ -224,35 +300,73 @@ class CompilationEngine():
             self.compileExpression()
             skip('symbol', ']')
 
+        # TODO calculate lhs offset
+
+        lhsSymbol = getSymbol(lhsName)
+
         skip('symbol', '=')
+
         self.compileExpression()
+
+        # pop into lhs
+        vmw.writePop(lhsSymbol.kind, lhsSymbol.index)
+
         skip('symbol', ';')
         closeTag()
 
     def compileIf(self):
         openTag('ifStatement')
         skip('keyword', 'if')
+
         skip('symbol', '(')
         self.compileExpression()
         skip('symbol', ')')
+
+        if_false, if_end = uniqueLabels('if_false', 'if_end')
+
+        vmw.WriteArithmetic('not')
+        vmw.WriteIf(if_false)
+
+        # true
         skip('symbol', '{')
         self.compileStatements()
+        vmw.WriteGoto(if_end)
         skip('symbol', '}')
+
+        vmw.WriteLabel(if_false)
+
+        # else
         if tokenIsKeyword('else'):
+            skipToken()
             skip('symbol', '{')
             self.compileStatements()
             skip('symbol', '}')
+
+        vmw.WriteLabel(if_end)
         closeTag()
 
     def compileWhile(self):
         openTag('whileStatement')
         skip('keyword', 'while')
+
+        while_start, while_end = uniqueLabels('while_start', 'while_end')
+
+        vmw.WriteLabel(while_start)
+
         skip('symbol', '(')
         self.compileExpression()
         skip('symbol', ')')
+
+        vmw.WriteArithmetic('not')
+        vmw.WriteIf(while_end)
+
         skip('symbol', '{')
         self.compileStatements()
         skip('symbol', '}')
+
+        vmw.WriteGoto(while_start)
+        vmw.WriteLabel(while_end)
+
         closeTag()
 
     def compileDo(self):
@@ -312,40 +426,64 @@ class CompilationEngine():
             vmw.writePush('constant', tokenValue())
             skipToken()
         elif tokenIsType('stringConstant'):
+            # TODO stringConstant
             skipToken()
         elif tokenIsKeyword('true', 'false', 'null', 'this'):
+            value = tokenValue()
+            if value == 'true':
+                vmw.writePush('constant', 1)
+                vmw.WriteArithmetic('neg')
+            else:
+                vmw.writePush('constant', 0)
+            skipToken()
+        elif tokenIsKeyword('this'):
+            # TODO this
             skipToken()
         elif tokenIsType('identifier'):
+            identifierValue = tokenValue()
             skipToken()
             if tokenIs('symbol', '['):
                 # varName [ expression ]
                 skipToken()
                 self.compileExpression()
                 skip('symbol', ']')
+                # TODO support multi dimension array
             elif tokenIs('symbol', '('):
                 # subroutineName ( expressions )
                 skipToken()
-                self.compileExpression()
+
+                nArgs = self.compileExpressionList()
+
                 skip('symbol', ')')
-                pass
+
+                vmw.writeCall(identifierValue, nArgs)
             elif tokenIs('symbol', '.'):
                 skipToken()
+
+                functionName = '%s.%s' % (identifierValue, tokenValue())
                 skipIdentifier()
+
                 skip('symbol', '(')
-                self.compileExpressionList()
+                nArgs = self.compileExpressionList()
                 skip('symbol', ')')
+
+                vmw.writeCall(functionName, nArgs)
             else:
                 # varName
-                pass
+                symbol = getSymbol(identifierValue)
+                vmw.writePush(symbol.kind, symbol.index)
         elif tokenIs('symbol', '('):
-            # subroutineName ( expressions )
             skipToken()
             self.compileExpression()
             skip('symbol', ')')
-            pass
         elif tokenIsSymbol('-~'):
+            v = tokenValue()
             skipToken()
             self.compileTerm()
+            if v == '-':
+                vmw.WriteArithmetic('neg')
+            else:
+                vmw.WriteArithmetic('not')
         else:
             raise SyntaxError(token())
 

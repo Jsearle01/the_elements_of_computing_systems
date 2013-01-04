@@ -25,6 +25,11 @@ def get_arguments():
         action='store_true',
         help='print to stdout')
 
+    argument_parser.add_argument('--debug',
+        dest='debug',
+        action='store_true',
+        help='print with tree')
+
     return argument_parser.parse_args()
 
 def get_filenames(source):
@@ -33,7 +38,7 @@ def get_filenames(source):
         source = args.source.rstrip('/')
         for filename_in in glob(join(source, '*.jack')):
             filename_out = join(source,
-                    splitext(basename(source))[0] + suffix)
+                    splitext(basename(filename_in))[0] + suffix)
             filenames.append((filename_in, filename_out))
     else:
         filename_in = args.source
@@ -55,6 +60,6 @@ if __name__ == '__main__':
             file_out = open(filename_out, "w")
 
         tokenizer = JackTokenizer(open(filename_in))
-        compiler = CompilationEngine(tokenizer, file_out)
+        compiler = CompilationEngine(tokenizer, file_out, args.debug)
         compiler.compileClass()
 
