@@ -1,4 +1,4 @@
 all:
-	python3 JackCompiler.py ConvertToBin
-	python3 JackCompiler.py ConvertToBin --stdout --debug
+	python3 JackCompiler.py Square
+	python3 JackCompiler.py Square --stdout --debug
 

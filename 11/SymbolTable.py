@@ -34,9 +34,12 @@ class SymbolTable():
         return count
 
     def Symbol(self, name):
-        s = self.symbolDict[name]
-        write('%s: %s' % (name, s))
-        return s
+        try:
+            s = self.symbolDict[name]
+            write('%s: %s' % (name, s))
+            return s
+        except KeyError:
+            return None
 
 
 if __name__ == '__main__':

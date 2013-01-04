@@ -28,8 +28,8 @@ class VMWriter():
 
     def writeCall(self, name, nArgs):
         write('call {} {}'.format(name, nArgs))
-        if nArgs == 0:
-            self.writePop('temp', 0)
+        ##if nArgs == 0:
+            ##self.writePop('temp', 0)
 
     def writeFunction(self, name, nLocals):
         write('function {} {}'.format(name, nLocals))

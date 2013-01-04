@@ -137,10 +137,9 @@ class CompilationEngine():
 
     def compileClassVarDec(self):
         openTag('classVarDec')
-        skipToken()
 
         kind = tokenValue()
-        skipKeyword('field', 'static')
+        skipToken()
 
         typ = tokenValue()
         skipType()
@@ -170,10 +169,17 @@ class CompilationEngine():
         subroutineType = tokenValue()
         skipToken()
 
-        # TODO implement method
         if subroutineType == 'method':
-            # extra argument for 'this'
+            # TODO implement method
             pass
+        elif subroutineType == 'constructor':
+            # TODO implement constructor
+            pass
+        elif subroutineType == 'function':
+            # TODO implement function
+            pass
+        else:
+            raise SyntaxError
 
         returnType = tokenValue()
 
