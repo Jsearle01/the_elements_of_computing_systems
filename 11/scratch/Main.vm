@@ -1,0 +1,12 @@
+function Main.main 1
+call Test.new 0
+pop local 0
+push local 0
+call Test.inc 1
+pop temp 0
+push local 0
+call Test.getA 1
+call Output.printInt 1
+pop temp 0
+push constant 0
+return

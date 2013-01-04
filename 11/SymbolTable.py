@@ -4,7 +4,7 @@ import functools
 
 from collections import namedtuple
 
-Symbol = namedtuple('Symbol', ['type', 'kind', 'index'])
+Symbol = namedtuple('Symbol', ['typ', 'kind', 'index'])
 
 class SymbolTable():
     def __init__(self, file, debug=False):

@@ -1,0 +1,12 @@
+class Test {
+    field int a;
+    constructor Test new() {
+        let a = 1;
+        return this;
+    }
+
+    function void hello() {
+        do Output.printInt(3110);
+        return;
+    }
+}

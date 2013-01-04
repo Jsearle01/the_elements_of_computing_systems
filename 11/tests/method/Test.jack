@@ -1,0 +1,11 @@
+class Test {
+    field int a;
+    constructor Test new() {
+        let a = 1;
+        return this;
+    }
+
+    method int getA() {
+        return a;
+    }
+}

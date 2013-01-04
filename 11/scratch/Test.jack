@@ -1,0 +1,15 @@
+class Test {
+    field int a;
+    constructor Test new() {
+        let a = 1;
+        return this;
+    }
+
+    method void inc() {
+        let a = a + 1;
+    }
+
+    method int getA() {
+        return a;
+    }
+}

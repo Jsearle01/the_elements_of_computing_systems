@@ -1,4 +1,7 @@
 all:
-	python3 JackCompiler.py Square
-	python3 JackCompiler.py Square --stdout --debug
+	python3 JackCompiler.py scratch
+
+less:
+	python3 JackCompiler.py scratch
+	python3 JackCompiler.py scratch --stdout --debug | less
 

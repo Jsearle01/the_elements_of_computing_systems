@@ -1,0 +1,276 @@
+function Square.new 0
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+push argument 2
+pop this 2
+call Square.draw 0
+push constant 0
+return
+function Square.dispose 1
+push argument 0
+pop pointer 0
+push constant 0
+call Memory.deAlloc 1
+push constant 0
+return
+function Square.draw 1
+push argument 0
+pop pointer 0
+push constant 1
+neg
+call Screen.setColor 1
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+push constant 0
+return
+function Square.erase 1
+push argument 0
+pop pointer 0
+push constant 0
+call Screen.setColor 1
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+push constant 0
+return
+function Square.incSize 1
+push argument 0
+pop pointer 0
+push this 1
+push this 2
+add
+push constant 254
+lt
+push this 0
+push this 2
+add
+push constant 510
+lt
+and
+not
+if-goto if_false_0
+call Square.erase 0
+push this 2
+push constant 2
+add
+pop this 2
+call Square.draw 0
+goto if_end_0
+label if_false_0
+label if_end_0
+push constant 0
+return
+function Square.decSize 1
+push argument 0
+pop pointer 0
+push this 2
+push constant 2
+gt
+not
+if-goto if_false_1
+call Square.erase 0
+push this 2
+push constant 2
+sub
+pop this 2
+call Square.draw 0
+goto if_end_1
+label if_false_1
+label if_end_1
+push constant 0
+return
+function Square.moveUp 1
+push argument 0
+pop pointer 0
+push this 1
+push constant 1
+gt
+not
+if-goto if_false_2
+push constant 0
+call Screen.setColor 1
+push this 0
+push this 1
+push this 2
+add
+push constant 1
+sub
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+push this 1
+push constant 2
+sub
+pop this 1
+push constant 1
+neg
+call Screen.setColor 1
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push constant 1
+add
+call Screen.drawRectangle 4
+goto if_end_2
+label if_false_2
+label if_end_2
+push constant 0
+return
+function Square.moveDown 1
+push argument 0
+pop pointer 0
+push this 1
+push this 2
+add
+push constant 254
+lt
+not
+if-goto if_false_3
+push constant 0
+call Screen.setColor 1
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push constant 1
+add
+call Screen.drawRectangle 4
+push this 1
+push constant 2
+add
+pop this 1
+push constant 1
+neg
+call Screen.setColor 1
+push this 0
+push this 1
+push this 2
+add
+push constant 1
+sub
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+goto if_end_3
+label if_false_3
+label if_end_3
+push constant 0
+return
+function Square.moveLeft 1
+push argument 0
+pop pointer 0
+push this 0
+push constant 1
+gt
+not
+if-goto if_false_4
+push constant 0
+call Screen.setColor 1
+push this 0
+push this 2
+add
+push constant 1
+sub
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+push this 0
+push constant 2
+sub
+pop this 0
+push constant 1
+neg
+call Screen.setColor 1
+push this 0
+push this 1
+push this 0
+push constant 1
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+goto if_end_4
+label if_false_4
+label if_end_4
+push constant 0
+return
+function Square.moveRight 1
+push argument 0
+pop pointer 0
+push this 0
+push this 2
+add
+push constant 510
+lt
+not
+if-goto if_false_5
+push constant 0
+call Screen.setColor 1
+push this 0
+push this 1
+push this 0
+push constant 1
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+push this 0
+push constant 2
+add
+pop this 0
+push constant 1
+neg
+call Screen.setColor 1
+push this 0
+push this 2
+add
+push constant 1
+sub
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+goto if_end_5
+label if_false_5
+label if_end_5
+push constant 0
+return

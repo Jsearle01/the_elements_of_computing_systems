@@ -1,11 +1,9 @@
 #! /usr/bin/env python3
 
-import itertools
-
 from VMWriter import VMWriter
 from SymbolTable import SymbolTable
 
-from collections import namedtuple
+from collections import namedtuple, Counter
 
 Function = namedtuple('Function', ['type', 'returnType'])
 
@@ -19,12 +17,6 @@ expressionCommands = {
         '|' : 'or',
         }
 
-uniqueID = itertools.count(0)
-
-def uniqueLabels(*labels):
-    uid = uniqueID.__next__()
-    unique_labels = ['%s_%s' % (label, uid) for label in labels]
-    return unique_labels
 
 def tag(t, v):
     indentPrint('({0} {1})'.format(t, v))
@@ -69,6 +61,15 @@ class CompilationEngine():
 
         global skip, skipToken, skipType, printToken
         global skipIdentifier, indentPrint, getSymbol
+        global isMethod, getSegment, getThis, uniqueLabel
+        global push, pop, call
+
+
+        def uniqueLabel(label):
+            uid = self.labelCounter[label]
+            self.labelCounter[label] += 1
+            return '%s%s' % (label, uid)
+
 
         def skip(t, v):
             self.tokenizer.skip(t, v)
@@ -110,8 +111,38 @@ class CompilationEngine():
             if s is None:
                 s = self.classSymbols.Symbol(name)
             if s is None:
-                raise SyntaxError('unknown variable: {}'.format(name))
+                raise KeyError('unknown variable: {}'.format(name))
             return s
+
+        def getThis(name):
+            try:
+                return getSymbol(name)
+            except KeyError:
+                return None
+
+        def call(lhsName, functionName, nArgs):
+            this = getThis(lhsName)
+            if this:
+                nArgs += 1
+                push(this.kind, this.index)
+                callName = '%s.%s' % (this.typ, functionName)
+            else:
+                callName = '%s.%s' % (lhsName, functionName)
+            vmw.writeCall(callName, nArgs)
+
+        def getSegment(kind):
+            if kind == 'field':
+                return 'this'
+            else:
+                return kind
+
+        def pop(kind, index):
+            segment = getSegment(kind)
+            vmw.writePop(segment, index)
+
+        def push(kind, index):
+            segment = getSegment(kind)
+            vmw.writePush(segment, index)
 
     def compileClass(self):
         openTag('class')
@@ -163,23 +194,12 @@ class CompilationEngine():
     def compileSubroutine(self):
 
         self.subroutineSymbols.startSubroutine()
+        self.labelCounter = Counter()
 
         openTag('subroutineDec')
 
         subroutineType = tokenValue()
         skipToken()
-
-        if subroutineType == 'method':
-            # TODO implement method
-            pass
-        elif subroutineType == 'constructor':
-            # TODO implement constructor
-            pass
-        elif subroutineType == 'function':
-            # TODO implement function
-            pass
-        else:
-            raise SyntaxError
 
         returnType = tokenValue()
 
@@ -201,10 +221,28 @@ class CompilationEngine():
         skip('symbol', '{')
 
         nLocals = 0
+
+        #if subroutineType == 'method':
+            ## argument 0 = this
+            #nLocals += 1
+
         while tokenIsKeyword('var'):
             nLocals += self.compileVarDec()
 
         vmw.writeFunction(functionName, nLocals)
+
+        if subroutineType == 'method':
+            # set this
+            push('argument', 0)
+            pop('pointer', 0)
+        elif subroutineType == 'constructor':
+            sizeThis = 1
+            push('constant', sizeThis + nLocals)
+            vmw.writeCall('Memory.alloc', 1)
+            pop('pointer', 0)
+        else:
+            # do nothing for functions
+            pass
 
         self.compileStatements()
 
@@ -315,7 +353,7 @@ class CompilationEngine():
         self.compileExpression()
 
         # pop into lhs
-        vmw.writePop(lhsSymbol.kind, lhsSymbol.index)
+        pop(lhsSymbol.kind, lhsSymbol.index)
 
         skip('symbol', ';')
         closeTag()
@@ -328,10 +366,13 @@ class CompilationEngine():
         self.compileExpression()
         skip('symbol', ')')
 
-        if_false, if_end = uniqueLabels('if_false', 'if_end')
+        if_true = uniqueLabel('IF_TRUE')
+        if_false = uniqueLabel('IF_FALSE')
+        if_end = uniqueLabel('IF_END')
 
-        vmw.WriteArithmetic('not')
-        vmw.WriteIf(if_false)
+        vmw.WriteIf(if_true)
+        vmw.WriteGoto(if_false)
+        vmw.WriteLabel(if_true)
 
         # true
         skip('symbol', '{')
@@ -355,7 +396,8 @@ class CompilationEngine():
         openTag('whileStatement')
         skip('keyword', 'while')
 
-        while_start, while_end = uniqueLabels('while_start', 'while_end')
+        while_start = uniqueLabel('WHILE_EXP')
+        while_end = uniqueLabel('WHILE_END')
 
         vmw.WriteLabel(while_start)
 
@@ -380,27 +422,33 @@ class CompilationEngine():
         skip('keyword', 'do')
         name = []
 
-        name.append(tokenValue())
+        identifier = tokenValue()
         skipIdentifier()
 
         if tokenIsSymbol('.'):
             skipToken()
-            name.append(tokenValue())
+            lhs = identifier
+            functionName = tokenValue()
             skipIdentifier()
+        else:
+            # method call
+            lhs = self.currentClass
+            functionName = identifier
 
         skip('symbol', '(')
         nArgs = self.compileExpressionList()
         skip('symbol', ')')
         skip('symbol', ';')
 
-        vmw.writeCall('.'.join(name), nArgs)
+        call(lhs, functionName, nArgs)
+        pop('temp', 0)
         closeTag()
 
     def compileReturn(self):
         openTag('returnStatement')
         skip('keyword', 'return')
         if self.compileExpression() == 0:
-            vmw.writePush('constant', 0)
+            push('constant', 0)
         vmw.writeReturn()
         skip('symbol', ';')
         closeTag()
@@ -429,21 +477,21 @@ class CompilationEngine():
         openTag('term')
 
         if tokenIsType('integerConstant'):
-            vmw.writePush('constant', tokenValue())
+            push('constant', tokenValue())
             skipToken()
         elif tokenIsType('stringConstant'):
             # TODO stringConstant
             skipToken()
-        elif tokenIsKeyword('true', 'false', 'null', 'this'):
+        elif tokenIsKeyword('true', 'false', 'null'):
             value = tokenValue()
             if value == 'true':
-                vmw.writePush('constant', 1)
-                vmw.WriteArithmetic('neg')
+                push('constant', 0)
+                vmw.WriteArithmetic('not')
             else:
-                vmw.writePush('constant', 0)
+                push('constant', 0)
             skipToken()
         elif tokenIsKeyword('this'):
-            # TODO this
+            push('pointer', 0)
             skipToken()
         elif tokenIsType('identifier'):
             identifierValue = tokenValue()
@@ -462,22 +510,22 @@ class CompilationEngine():
 
                 skip('symbol', ')')
 
-                vmw.writeCall(identifierValue, nArgs)
+                call(None, identifierValue, nArgs)
             elif tokenIs('symbol', '.'):
                 skipToken()
 
-                functionName = '%s.%s' % (identifierValue, tokenValue())
+                rhs = tokenValue()
                 skipIdentifier()
 
                 skip('symbol', '(')
                 nArgs = self.compileExpressionList()
                 skip('symbol', ')')
 
-                vmw.writeCall(functionName, nArgs)
+                call(identifierValue, rhs, nArgs)
             else:
                 # varName
                 symbol = getSymbol(identifierValue)
-                vmw.writePush(symbol.kind, symbol.index)
+                push(symbol.kind, symbol.index)
         elif tokenIs('symbol', '('):
             skipToken()
             self.compileExpression()
