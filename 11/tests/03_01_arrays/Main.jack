@@ -1,0 +1,19 @@
+class Main {
+    function void main() {
+        var Array a;
+        var int size;
+        var int i;
+
+        let size = 10;
+        let a = Array.new(size);
+
+        while (i < size) {
+            let a[i] = i;
+            do Output.printInt(a[i]);
+            do Output.println();
+        }
+
+        return;
+    }
+}
+

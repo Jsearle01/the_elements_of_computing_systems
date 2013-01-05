@@ -1,0 +1,13 @@
+class Main {
+    function void main() {
+        var String a;
+
+        let a = String.new(10);
+
+        let a = "hello";
+
+        do Output.printString(a);
+
+        return;
+    }
+}
