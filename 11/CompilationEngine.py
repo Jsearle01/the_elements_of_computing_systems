@@ -345,12 +345,17 @@ class CompilationEngine():
         lhsName = tokenValue()
         skipIdentifier()
 
+        arrayFound = False
+
         while tokenIs('symbol', '['):
+            arrayFound = True
+            symbol = getSymbol(lhsName)
             skipToken()
             self.compileExpression()
             skip('symbol', ']')
 
-        # TODO calculate lhs offset
+            push(symbol.kind, symbol.index)
+            vmw.WriteArithmetic('add')
 
         lhsSymbol = getSymbol(lhsName)
 
@@ -359,7 +364,13 @@ class CompilationEngine():
         self.compileExpression()
 
         # pop into lhs
-        pop(lhsSymbol.kind, lhsSymbol.index)
+        if arrayFound:
+            pop('temp', 0)
+            pop('pointer', 1)
+            push('temp', 0)
+            pop('that', 0)
+        else:
+            pop(lhsSymbol.kind, lhsSymbol.index)
 
         skip('symbol', ';')
         closeTag()
@@ -490,8 +501,15 @@ class CompilationEngine():
             push('constant', tokenValue())
             skipToken()
         elif tokenIsType('stringConstant'):
-            # TODO stringConstant
+            value = tokenValue()
             skipToken()
+
+            push('constant', len(value))
+            call('String', 'new', 1)
+
+            for c in value:
+                push('constant', ord(c))
+                call('String', 'appendChar', 2)
         elif tokenIsKeyword('true', 'false', 'null'):
             value = tokenValue()
             if value == 'true':
@@ -511,6 +529,14 @@ class CompilationEngine():
                 skipToken()
                 self.compileExpression()
                 skip('symbol', ']')
+
+                symbol = getSymbol(identifierValue)
+                push(symbol.kind, symbol.index)
+                vmw.WriteArithmetic('add')
+
+                pop('pointer', 1)
+                push('that', 0)
+
                 # TODO support multi dimension array
             elif tokenIs('symbol', '('):
                 # subroutineName ( expressions )
