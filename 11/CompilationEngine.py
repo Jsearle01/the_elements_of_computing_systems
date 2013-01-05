@@ -130,8 +130,8 @@ class CompilationEngine():
                 else:
                     callName = '%s.%s' % (lhsName, functionName)
             else:
-                push('pointer', 0)
-                nArgs += 1
+                #push('pointer', 0)
+                #nArgs += 1
                 callName = '%s.%s' % (self.currentClass, functionName)
             vmw.writeCall(callName, nArgs)
 
@@ -445,18 +445,32 @@ class CompilationEngine():
         identifier = tokenValue()
         skipIdentifier()
 
+        nArgs = 0
+
+
         if tokenIsSymbol('.'):
             skipToken()
-            lhs = identifier
+
+            try:
+                s = getSymbol(identifier)
+                lhs = s.typ
+                push(s.kind, s.index)
+                nArgs += 1
+            except KeyError:
+                lhs = identifier
+
             functionName = tokenValue()
             skipIdentifier()
+
         else:
             # method call
             lhs = None
             functionName = identifier
+            push('pointer', 0)
+            nArgs += 1
 
         skip('symbol', '(')
-        nArgs = self.compileExpressionList()
+        nArgs += self.compileExpressionList()
         skip('symbol', ')')
         skip('symbol', ';')
 

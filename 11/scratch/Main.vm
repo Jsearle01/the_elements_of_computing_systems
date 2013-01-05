@@ -1,7 +1,7 @@
 function Main.main 1
 call Test.new 0
 pop local 0
-push local 0
+push pointer 0
 call Test.inc 1
 pop temp 0
 push local 0
