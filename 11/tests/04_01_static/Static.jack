@@ -1,0 +1,17 @@
+class Static {
+    static int a;
+
+    constructor Static new() {
+        return this;
+    }
+
+    method void set (int newA) {
+        let a = newA;
+        return;
+    }
+
+    method int get () {
+        return a;
+    }
+}
+

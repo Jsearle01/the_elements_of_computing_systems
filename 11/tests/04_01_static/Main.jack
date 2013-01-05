@@ -1,0 +1,15 @@
+class Main {
+    function void main() {
+        var Static a, b;
+
+        let a = Static.new();
+        let b = Static.new();
+
+        do a.set(25);
+
+        do Output.printInt(b.get());
+
+        return;
+    }
+}
+
