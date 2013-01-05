@@ -221,6 +221,9 @@ class CompilationEngine():
         self.subroutineTypes[functionName] = Function(subroutineType,
                 returnType)
 
+        if subroutineType == 'method':
+            self.subroutineSymbols.Define('this', self.currentClass, 'argument')
+
         self.compileParameterList()
 
 
@@ -228,10 +231,6 @@ class CompilationEngine():
         skip('symbol', '{')
 
         nLocals = 0
-
-        #if subroutineType == 'method':
-            ## argument 0 = this
-            #nLocals += 1
 
         while tokenIsKeyword('var'):
             nLocals += self.compileVarDec()

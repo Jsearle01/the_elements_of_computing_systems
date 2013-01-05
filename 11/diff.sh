@@ -4,6 +4,10 @@
 
 rm -rf temp/*
 
+if [[ ! -d temp ]]; then
+    mkdir temp
+fi
+
 cp -r tests temp
 mv temp/tests temp/ref
 cp -r tests temp
