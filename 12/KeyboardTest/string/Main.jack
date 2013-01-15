@@ -1,0 +1,19 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/KeyboardTest/Main.jack
+
+/** Test program for the OS Keyboard class. */
+class Main {
+
+    /** Gets input from the user and verifies its contents. */
+    function void main() {
+        var String s;
+        let s = String.new(10);
+        do s.appendChar(65);
+        do s.appendChar(66);
+        do s.appendChar(67);
+        do Output.printString(s);
+        return;
+    }
+}

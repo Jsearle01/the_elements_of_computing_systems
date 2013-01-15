@@ -10,6 +10,7 @@ class Keyboard {
 
     /** Initializes the keyboard. */
     function void init() {
+        return;
     } 
 
     /**
@@ -33,6 +34,7 @@ class Keyboard {
      * F1 - F12 = 141 - 152
      */
     function char keyPressed() {
+        return Memory.peek(24576);
     }
 
     /**								
@@ -41,6 +43,19 @@ class Keyboard {
      * the key to the screen, and returns the value of the pressed key.
      */
     function char readChar() {
+        var char k, newKey;
+        let k = 0;
+        while (k = 0) {
+            let k = Keyboard.keyPressed();
+        }
+        do Output.printChar(k);
+
+        let newKey = Keyboard.keyPressed();
+        while (k = newKey) {
+            let newKey = Keyboard.keyPressed();
+        }
+
+        return k;
     }
 
     /**								
@@ -48,6 +63,34 @@ class Keyboard {
      * (until a newline character) from the keyboard, and returns its value.
      */
     function String readLine(String message) {
+        var char c;
+        var String line;
+        var char newLine;
+        var char backSpace;
+        var int length;
+
+        let newLine = String.newLine();
+        let backSpace = String.backSpace();
+
+        let line = String.new(40);
+        let length = line.length();
+
+        do Output.printString(message);
+
+        while (-1) {
+            let c = Keyboard.readChar();
+            if (c = newLine) {
+                do Output.println();
+                return line;
+            } else {
+                if (c = backSpace) {
+                    do line.eraseLastChar();
+                } else {
+                    do line.appendChar(c);
+                }
+            }
+        }
+        return -1;
     }   
 
     /**								
@@ -56,5 +99,8 @@ class Keyboard {
      * integer value (until the first non numeric character).
      */
     function int readInt(String message) {
+        var String line;
+        let line =  Keyboard.readLine(message);
+        return line.intValue();
     }
 }
