@@ -14,9 +14,25 @@ class Output {
 
     // Character map for printing on the left of a screen word
     static Array charMaps; 
+    static int row, column;
+    static int rows, columns;
+    static int charWidth, charHeight;
+    static int screenWidth, screenHeight;
+    static int cellsPerRow;
 
     /** Initializes the screen and locates the cursor at the screen's top-left. */
     function void init() {
+        let rows = 23;
+        let columns = 64;
+        let screenWidth = 512;
+        let screenHeight = 256;
+        let charWidth = 8;
+        let charHeight = 11;
+        let cellsPerRow  = 32;
+
+        do Output.initMap();
+
+        return;
     }
 
     // Initalizes the character map array
@@ -65,7 +81,7 @@ class Output {
         do Output.create(64,30,51,51,59,59,59,27,3,30,0,0);  // @
         do Output.create(63,30,51,51,24,12,12,0,12,12,0,0);  // ?
 
-        do Output.create(65,0,0,0,0,0,0,0,0,0,0,0);          // A ** TO BE FILLED **
+        do Output.create(65,12,30,51,51,63,51,51,51,51,0,0); // A
         do Output.create(66,31,51,51,51,31,51,51,51,31,0,0); // B
         do Output.create(67,28,54,35,3,3,3,35,54,28,0,0);    // C
         do Output.create(68,15,27,51,51,51,51,51,27,15,0,0); // D
@@ -171,28 +187,119 @@ class Output {
     /** Moves the cursor to the j’th column of the i’th row,
      *  and erases the character that was there. */
     function void moveCursor(int i, int j) {
+        let row = i;
+        let column = j;
+        return;
     }
 
     /** Prints c at the cursor location and advances the cursor one
      *  column forward. */
     function void printChar(char c) {
+        do Output.setChar(column, row, c);
+
+        do Output.incColumn();
+
+        return;
+    }
+
+    function void setChar(int x, int y, char c) {
+        var int i, j;
+        var int cell;
+        var int o;
+        var int rowOffset;
+        var int lhsMask;
+        var int rhsMask;
+        var Array characterMap;
+        var Array screen;
+
+        let screen = 16384;
+
+        // bitmasks for clearing half a cell
+        let lhsMask = 255 * 256; // 1111 1111 0000 0000
+        let rhsMask = 255;       // 0000 0000 1111 1111
+
+        // each int16 cell makes up two 8bit characters
+        let cell = x / 2;
+
+        let rowOffset = y * cellsPerRow * charHeight;
+        let characterMap = Output.getMap(c);
+
+        while (j < charHeight) {
+            let i = characterMap[j];
+            let o = cell + rowOffset + (j * cellsPerRow);
+            if ((column & 1) = 1) {
+                let screen[o] = (screen[o] & rhsMask)| (i * 256);
+            } else {
+                let screen[o] = (screen[o] & lhsMask) | i;
+            }
+            let j = j + 1;
+        }
+
+        return;
+    }
+
+    function void incColumn() {
+        let column = column + 1;
+        if (column = columns) {
+            let column = 0;
+            do Output.incRow();
+        }
+        return;
+    }
+
+    function void incRow() {
+        let row = row + 1;
+        if (row = rows) {
+            let row = 0;
+        }
+        return;
     }
 
     /** Prints s starting at the cursor location, and advances the
      *  cursor appropriately. */
     function void printString(String s) {
+        var int i;
+        var int length;
+
+        let length = s.length();
+        while (i < length) {
+            do Output.printChar(s.charAt(i));
+            let i = i + 1;
+        }
+        return;
     }
 
     /** Prints i starting at the cursor location, and advances the
      *  cursor appropriately. */
-    function void printInt(int i) {
+    function void printInt(int number) {
+        var String s;
+        var int i, lenght;
+
+        let s = String.new(6);
+        do s.setInt(number);
+        do Output.printString(s);
+        do s.dispose();
+        return;
     }
 
     /** Advances the cursor to the beginning of the next line. */
     function void println() {
+        let column = 0;
+        do Output.incRow();
+        return;
     }
 
     /** Moves the cursor one column back. */
     function void backSpace() {
+        let column = column - 1;
+        if (column < 0) {
+            let column = 0;
+        }
+        do Output.printChar(32);
+        let column = column - 1;
+        if (column < 0) {
+            let column = 0;
+        }
+        return;
     }
 }
