@@ -1,0 +1,120 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+
+/**
+ * Memory operations library.
+ */ 
+class Memory {
+    static int freeList;
+
+    /** Initializes memory parameters. */
+    function void init() {
+        var Array firstSegment;
+        let freeList = 2048;
+
+        let firstSegment = freeList;
+        let firstSegment[0] = 16383 - 2048;
+        let firstSegment[1] = 0;
+        return;
+    }
+
+    /** Returns the value of the main memory at the given address. */
+    function int peek(int address) {
+        var Array m;
+        let m = 0;
+        return m[address];
+    }
+
+    /** Sets the value of the main memory at this address
+     *  to the given value. */
+    function void poke(int address, int value) {
+        var Array m;
+        let m = 0;
+        let m[address] = value;
+        return;
+    }
+
+    /** finds and allocates from the heap a memory block of the 
+     *  specified size and returns a reference to its base address. */
+    function int alloc(int size) {
+        var int blockAddress;
+        let blockAddress = Memory.findBlock(freeList, size);
+        return blockAddress;
+    }
+
+    function int findBlock(int elementAddress, int size) {
+        var Array segment;
+        let segment = elementAddress;
+        if (segment[0] > size) {
+            return Memory.getBlock(elementAddress, size);
+        } else {
+            if (segment[1] = 0) {
+                // end of list
+                return 0;
+            } else {
+                return Memory.findBlock(segment[1], size);
+            }
+        }
+    }
+
+    function int getBlock(int elementAddress, int size) {
+        var Array segment, newSegment;
+        var int originalLength, originalNext;
+        var int blockAddress;
+        var int leftOver;
+        var int blockSize;
+
+        let segment = elementAddress;
+        let originalLength = segment[0];
+        let originalNext = segment[1];
+        let blockSize = size + 1;
+
+        //                               >= minBlockSize
+        if ((originalLength - blockSize) > 2) {
+            // then split this block in 2
+            let newSegment = segment + blockSize;
+            let newSegment[0] = originalLength - size;
+            let newSegment[1] = originalNext;
+            do Memory.removeBlock(elementAddress);
+            do Memory.addBlock(newSegment);
+            let segment[0] = blockSize;
+        }
+        
+        let blockAddress = segment + 1;
+        return blockAddress;
+    }
+
+    function void removeBlock(int elementAddress) {
+        var Array segment;
+
+        if (elementAddress = freeList) {
+            let segment = elementAddress;
+            let freeList = segment[1];
+            return;
+        }
+
+        let segment = freeList;
+        while (~(segment[1] = 0)) {
+            if (segment[1] = elementAddress) {
+                let segment[1] = elementAddress[1];
+                return;
+            }
+            let segment = segment[1];
+        }
+        return;
+    }
+    
+    function void addBlock(int address) {
+        let address[1] = freeList;
+        let freeList = address;
+        return;
+    }
+
+    /** De-allocates the given object and frees its space. */
+    function void deAlloc(int address) {
+        do Memory.addBlock(address - 1);
+        return;
+    }    
+}
